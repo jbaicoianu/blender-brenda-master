@@ -1,8 +1,8 @@
 import bpy
 
-objects = bpy.context.scene.objects.keys()
+objects = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH' and 'LightMap' in obj.data.uv_layers]
 with open("objects.txt", "w") as objlist:
-	for o in objects:
-		if bpy.data.objects[o].type == 'MESH':
-			objlist.write("%s\n" % o)
+	for obj in objects:
+		print("%s" % (obj.name))
+		objlist.write("%s\n" % obj.name)
 	objlist.close()

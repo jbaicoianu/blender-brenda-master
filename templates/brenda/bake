@@ -1,6 +1,6 @@
 cat >bake.py <<EOF
 import bpy
-objects = bpy.context.scene.objects.keys()
+objects = [x for x in bpy.context.scene.objects.keys() if bpy.data.objects[x].type == 'MESH' and 'LightMap' in bpy.data.objects[x].data.uv_layers]
 objname = objects[$START]
 
 bpy.context.scene.objects.active = bpy.data.objects[objname]
