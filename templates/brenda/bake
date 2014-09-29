@@ -1,0 +1,18 @@
+cat >bake.py <<EOF
+import bpy
+objects = bpy.context.scene.objects.keys()
+objname = objects[$START]
+
+bpy.context.scene.objects.active = bpy.data.objects[objname]
+bpy.context.scene.objects.active.select = True
+bpy.context.scene.cycles.samples = 1
+
+bpy.ops.object.bake(type="COMBINED", use_clear=True)
+
+for i in bpy.data.images:
+	if i.is_dirty:
+		print("save lightmap: %s (%s)" % (i.name, i.file_format))
+		fname = $OUTDIR + '/' + i.name + '_' + objname + '.png'
+		i.save_render(fname)
+EOF
+blender -b *.blend -P bake.py -F PNG -t 0
