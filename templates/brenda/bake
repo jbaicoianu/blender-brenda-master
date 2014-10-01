@@ -1,18 +1,107 @@
 cat >bake.py <<EOF
 import bpy
-objects = [x for x in bpy.context.scene.objects.keys() if bpy.data.objects[x].type == 'MESH' and 'LightMap' in bpy.data.objects[x].data.uv_layers]
-objname = objects[$START]
+import sys
 
-bpy.context.scene.objects.active = bpy.data.objects[objname]
-bpy.context.scene.objects.active.select = True
-bpy.context.scene.cycles.samples = 1
+objects = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH' and 'LightMap' in obj.data.uv_layers]
+bakematerials = {} 
+bakeimages = {} 
+numsamples = 1
+numbounces = 16
+lightmapsize = 2048
+tilesize = 8
 
-bpy.ops.object.bake(type="COMBINED", use_clear=True)
+argv = sys.argv[sys.argv.index("--") + 1:] 
 
-for i in bpy.data.images:
-	if i.is_dirty:
-		print("save lightmap: %s (%s)" % (i.name, i.file_format))
-		fname = $OUTDIR + '/' + i.name + '_' + objname + '.png'
-		i.save_render(fname)
+print(argv)
+outdir = '.'
+if len(argv) > 0:
+	outdir = argv[0]
+
+def get_lightmap_name(slotnum, obj):
+	material = obj.material_slots[slotnum].material
+	nodes = material.node_tree.nodes
+	print("===== %s =====" % (material.name))
+	for n in nodes:
+		print(n.name)
+		if n.type == 'TEX_IMAGE' and n.name == 'lightmap-image':
+			print("yay: %s" % n.image.name)
+			return n.image.name
+	return 'default'
+
+def get_material(slotnum, obj):
+	lightmapname = get_lightmap_name(slotnum, obj)
+	if lightmapname not in bakeimages:
+		fullname = lightmapname + '_' + obj.name
+		bpy.ops.image.new(name=fullname, width=lightmapsize, height=lightmapsize, alpha=True)
+		bakeimages[lightmapname] = bpy.data.images[fullname]
+		
+	if lightmapname not in bakematerials:
+		print("create new material for %s" % lightmapname)
+		# set up baking material
+		bakemat = bpy.data.materials.new('bake-%03d' % (slotnum))
+		bakemat.use_nodes = True
+		tree = bakemat.node_tree
+		nodes = tree.nodes
+		links = tree.links
+		nodes.clear()
+
+		# Basic node setup
+		bakenodes = {}
+		bakenodes['output'] = nodes.new(type='ShaderNodeOutputMaterial')
+		bakenodes['diffuse'] = nodes.new(type='ShaderNodeBsdfDiffuse')
+		bakenodes['baketex'] = nodes.new(type='ShaderNodeTexImage')
+		bakenodes['uvmap'] = nodes.new(type='ShaderNodeUVMap')
+		bakenodes['uvmap'].uv_map = "LightMap"
+
+		# Create new bake texture 
+		# FIXME - shouldn't hardcode size, but we can always render at high-quality and downsample
+		# FIXME - should create one lightmap for each unique lightmap that's already mapped to this object
+
+		bakeimg = bakeimages[lightmapname]
+		
+		bakenodes['baketex'].image = bakeimg
+		bakenodes['baketex'].select = True
+		nodes.active = bakenodes['baketex']
+
+		links.new(bakenodes['uvmap'].outputs['UV'], bakenodes['baketex'].inputs['Vector'])
+		links.new(bakenodes['diffuse'].outputs['BSDF'], bakenodes['output'].inputs['Surface'])
+
+		bakematerials[lightmapname] = bakemat
+
+	return bakematerials[lightmapname]
+
+def bake_object(objnum):
+	obj = objects[objnum]
+
+	bpy.context.scene.objects.active = obj
+	bpy.context.scene.cycles.samples = numsamples
+	bpy.context.scene.cycles.max_bounces = numbounces
+	bpy.context.scene.cycles.max_bounces = numbounces
+	bpy.context.scene.cycles.transparent_max_bounces = numbounces
+
+	bpy.context.scene.render.tile_x = tilesize
+	bpy.context.scene.render.tile_y = tilesize
+
+	obj.select = True
+
+	print("object %s has %s material slots" % (obj.name, len(obj.material_slots)))
+	for ms in range(0, len(obj.material_slots)):
+		obj.material_slots[ms].material = get_material(ms, obj)
+		print("updated material: %s" % obj.material_slots[ms].material.name)
+
+
+
+	# bake it!
+	bpy.ops.object.bake(type="COMBINED", use_clear=True)
+
+	print("baked!")
+	for img in bakeimages:
+		fname = outdir + '/' + img + '_' + obj.name + '.png'
+		print("save lightmap: %s" % (fname))
+		bakeimages[img].save_render(fname)
+
+bake_object($START)
 EOF
-blender -b *.blend -P bake.py -F PNG -t 0
+blender -b *.blend -P bake.py -F PNG -t 0 -- $OUTDIR
+
+

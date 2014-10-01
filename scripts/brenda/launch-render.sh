@@ -13,13 +13,12 @@ TILESX=12
 TILESY=8
 
 init_data() {
-	./scripts/build-jobfile.sh $JOBNAME
+	./scripts/brenda/build-jobfile.sh $JOBNAME
 	return $?
 }
 
 init_data
 DATAEXISTS=$?
-echo fuck $DATAEXISTS
 
 if [ $DATAEXISTS -eq 0 ]; then
 	echo -n Populating job queue...
