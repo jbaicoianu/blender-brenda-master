@@ -1,4 +1,7 @@
 cat >bake.py <<EOF
+'''
+Brenda template for distributed cycles baking
+'''
 import bpy
 import sys
 
@@ -8,25 +11,25 @@ bakeimages = {}
 numsamples = 100
 numbounces = 16
 lightmapsize = 4096
+baketype = "COMBINED"
 tilesize = 8
 
 argv = sys.argv[sys.argv.index("--") + 1:] 
 
-print(argv)
 outdir = '.'
 if len(argv) > 0:
 	outdir = argv[0]
 
 def get_lightmap_name(slotnum, obj):
+	# Search through material nodes to see if there's an ImageTexture node named 'lightmap-image'
 	material = obj.material_slots[slotnum].material
 	nodes = material.node_tree.nodes
-	print("===== %s =====" % (material.name))
 	for n in nodes:
-		print(n.name)
 		if n.type == 'TEX_IMAGE' and n.name == 'lightmap-image':
-			print("yay: %s" % n.image.name)
+			print("found lightmap for %s: %s" % (obj.name, n.image.name))
 			return n.image.name
-	return 'default'
+	# couldn't find an existing lightmap image, so use a default name
+	return 'lightmap'
 
 def get_material(slotnum, obj):
 	lightmapname = get_lightmap_name(slotnum, obj)
@@ -92,7 +95,7 @@ def bake_object(objnum):
 
 
 	# bake it!
-	bpy.ops.object.bake(type="COMBINED", use_clear=True)
+	bpy.ops.object.bake(type=baketype, use_clear=True)
 
 	print("baked!")
 	for img in bakeimages:
