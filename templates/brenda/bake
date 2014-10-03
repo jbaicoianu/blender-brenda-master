@@ -5,9 +5,9 @@ import sys
 objects = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH' and 'LightMap' in obj.data.uv_layers]
 bakematerials = {} 
 bakeimages = {} 
-numsamples = 1
+numsamples = 100
 numbounces = 16
-lightmapsize = 2048
+lightmapsize = 4096
 tilesize = 8
 
 argv = sys.argv[sys.argv.index("--") + 1:] 
