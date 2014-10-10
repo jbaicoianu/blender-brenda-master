@@ -1,6 +1,6 @@
 {
   "name": "node-grafanarender",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A node.js backend to serve grafana and provide a RESTful API for https://github.com/jbaicoianu/blender-brenda-master/",
   "main": "server.js",
   "repository": "",
@@ -8,16 +8,16 @@
   "dependencies": {
     "async": "~0.2.8",
     "express": "~3.2.4",
-    "morgan": "*",
-    "body-parser": "*",
-    "method-override": "*",
+    "morgan": "1.3.2",
+    "body-parser": "1.9.0",
+    "method-override": "2.2.0",
     "socket.io": "1.1.0",
-    "passport": "*",
-    "passport-local": "*",
-    "passport-http": "*",
-    "connect-busboy": "*",
-    "fs": "*",
+    "passport": "0.2.1",
+    "passport-local": "1.0.0",
+    "passport-http": "0.2.2",
+    "connect-busboy": "0.0.2",
+    "fs": "0.0.2",
     "express-jwt": "0.4.0",
-    "jsonwebtoken": "1.1.2",
+    "jsonwebtoken": "1.1.2"
   }
 }
