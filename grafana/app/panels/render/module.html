@@ -1,0 +1,135 @@
+
+<div ng-controller='render' ng-init="tab = 'jobfile'">
+<style>
+    .renderopts {
+        float: left;
+        margin-right: 5px;
+    }
+    .rangeinput {
+        width: 65px;
+    }
+    h3 {
+        size: 1.5rem;
+    }
+    .cb {    
+    list-style: none;
+    padding: 10px;
+    display:block;
+    background-color: #000;  
+    color: #FFF;
+    border: 1px solid black;
+	border-radius: 5px;
+    }
+    .cb:hover{
+    	background-color: #4a4a4a; 
+    	color: #FFF;
+    }
+    #stdout, #exitstate {
+        width: 400px;
+        height:150px;
+        overflow: auto;
+    }
+    .dragover {
+        background-color:#00cc00;
+    }
+    .filedrop {
+        width:175px;
+        height:100px;
+        border:1px dotted #cccccc;
+        border-radius:5px;
+        text-align:center;
+    }
+</style>
+    <!-- Side Menu -->
+    <div class="sidemenu renderopts">
+        <div class="cb" ng-click="tab = 'jobfile'">Jobfile</div>
+        <div class="cb" ng-click="tab = 'jobqueue'">Jobs</div>
+        <div class="cb" ng-click="tab = 'instances'">Instances</div>
+    </div>
+    <!-- Upload Form -->
+    <div class="renderopts" id="uploadform" ng-show="tab == 'jobfile'">
+        <div class="renderopts" id="upload">
+            <input type="file" ng-file-select="onFileSelect($files)">
+            <div class="filedrop" ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="dragover"
+                ng-show="dropSupported">drop files here</div>
+            <div ng-file-drop-available="dropSupported=true" 
+                ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
+            <button ng-click="upload.abort()">Cancel Upload</button>
+            <pre> {{ percent }} </pre>
+        </div>
+        <div class="renderopts" id="stdout">
+            stdout: 
+            <span ng-repeat="line in stdout track by $index">
+                {{ line }}
+                <span ng-show="! $last"><br></span>
+            </span>
+        </div>
+    </div>
+    <!-- Submit Job -->
+    <div class="renderopts" id="jobqueue" ng-show="tab == 'jobqueue'">
+        <h3>Queue Jobs</h3>
+        <select class="input-sm" ng-model="jobstate" ng-options="s.value for s in jobtypes">
+        </select>
+        <div ng-hide="jobstate.value!='animation'">
+            <form novalidate class="simple-form">
+            numframes: <input type="number" min="1" ng-model="animationArgs.numframes" id="numframes" class='rangeinput' /><br>
+            <button type="submit" class="btn btn-primary btn-lg" ng-click="submitAnimJob()">
+                Populate Jobs
+            </button>
+            <pre>{{ animationArgs }}</pre>
+            </form>
+        </div>
+        <div  ng-hide="jobstate.value!='subframe'">
+            <form novalidate class="simple-form">
+            numframes: <input type="number" min="1" ng-model="subframeArgs.numframes" id="numframes" class='rangeinput' />
+            tilesX: <input type="number" min="1" ng-model="subframeArgs.tilesX" id="tilesx" class='rangeinput' />
+            tilesY: <input type="number" min="1" ng-model="subframeArgs.tilesY" id="tilesy" class='rangeinput' /><br>
+            <button type="submit" class="btn btn-primary btn-lg" ng-click="submitSubframeJob()">
+                Populate Jobs
+            </button>
+            <pre>{{ subframeArgs }}</pre>
+            </form>
+        </div>
+        <div ng-hide="jobstate.value!='bake'">
+            <form novalidate class="simple-form">
+            numobjects: <input type="number" min="1" ng-model="bakeArgs.numobjects" id="numobjects" class='rangeinput' /><br>
+            <button type="submit" class="btn btn-primary btn-lg" ng-click="submitBakeJob()">
+                Populate Jobs
+            </button>
+            <pre>{{ bakeArgs }}</pre>
+            </form>
+        </div>
+        <div class="renderopts" id="stdout">
+            stdout: 
+            <span ng-repeat="line in stdout track by $index">
+                {{ line }}
+                <span ng-show="! $last"><br></span>
+            </span>
+        </div>
+    </div>
+    <!-- Spawn Instances -->
+    <div class="renderopts" id="spawninstances" ng-show="tab == 'instances'">
+        <div class="renderopts">
+            <h3>Spawn Instances</h3>
+            <form class="simple-form">
+                instancecount: <input type="range" min="1" max="50" ng-model="instanceArgs.instancecount.num" />
+                <input type="number" min="1" ng-model="instanceArgs.instancecount.num" size="3" id="instancecount" class='rangeinput' /><br>
+                instancetype: <select class="input-sm" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" />
+                <br>
+                instanceprice: <input type="number" min="0.001" step="0.001" ng-model="instanceArgs.instanceprice" size="3" id="instanceprice" class='rangeinput' /><br>
+                <button type="submit" class="btn btn-primary btn-lg" ng-click="submitInstanceSpawn()">
+                    Spawn Instances
+                </button>
+            </form>
+        </div>
+        <div class="renderopts" id="stdout">
+            <pre> {{ instanceArgs }} </pre>
+            <pre> {{ client_id }} </pre>
+            stdout: 
+            <span ng-repeat="line in stdout track by $index">
+                {{ line }}
+                <span ng-show="! $last"><br></span>
+            </span>
+        </div>
+    </div>
+</div>

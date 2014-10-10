@@ -1,0 +1,184 @@
+.graph-canvas-wrapper {
+  position: relative;
+  cursor: crosshair;
+}
+
+.graph-legend {
+  margin: 0 20px;
+  text-align: center;
+
+  .popover-content {
+    padding: 0;
+  }
+}
+
+.graph-legend-icon {
+  position: relative;
+  padding-right: 4px;
+  top: 1px;
+}
+
+.graph-legend-series,
+.graph-legend-icon,
+.graph-legend-alias,
+.graph-legend-value {
+  float: left;
+  white-space: nowrap;
+  text-align: left;
+  &.current:before {
+    content: "Current: "
+  }
+  &.max:before {
+    content: "Max: "
+  }
+  &.min:before {
+    content: "Min: "
+  }
+  &.total:before {
+    content: "Total: "
+  }
+  &.avg:before {
+    content: "Avg: "
+  }
+}
+
+.graph-legend-series {
+  padding-left: 10px;
+  padding-top: 6px;
+}
+
+.graph-legend-value {
+  padding-left: 6px;
+}
+
+.graph-legend-table {
+  display: table;
+
+  .graph-legend-series {
+    display: table-row;
+    float: none;
+    padding-left: 0;
+    &.pull-right {
+      float: none;
+      .graph-legend-alias::after {
+        content: 'y\00B2';
+      }
+    }
+  }
+
+  .graph-legend-alias {
+    float: none;
+    display: table-cell;
+    white-space: nowrap;
+  }
+
+  .graph-legend-icon {
+    display: table-cell;
+    float: none;
+    white-space: nowrap;
+    padding: 0 4px;
+    top: 2px;
+  }
+
+  .graph-legend-value  {
+    float: none;
+    display: table-cell;
+    white-space: nowrap;
+    padding-left: 15px;
+  }
+}
+
+
+.graph-legend-rightside {
+
+  &.graph-wrapper {
+    display: table;
+    width: 100%;
+  }
+
+  .graph-canvas-wrapper {
+    display: table-cell;
+    width: 100%;
+    position: relative;
+  }
+
+  .graph-legend-wrapper {
+    display: table-cell;
+    vertical-align: top;
+    position: relative;
+    left: -4px;
+  }
+
+  .graph-legend {
+    margin: 0;
+  }
+
+  .graph-legend-series {
+    display: block;
+    padding-left: 0px;
+  }
+
+  .graph-legend-table .graph-legend-series {
+    display: table-row;
+  }
+}
+
+.graph-legend-series-hidden {
+  a {
+    color: @linkColorDisabled;
+  }
+}
+
+.graph-legend-popover {
+  width: 200px;
+  label {
+    display: inline-block;
+  }
+  .btn {
+    padding: 1px 3px;
+    margin-right: 0px;
+    line-height: initial;
+  }
+  .close {
+    margin-right: 5px;
+    color: @linkColor;
+    opacity: 0.7;
+    text-shadow: none;
+  }
+  .editor-row {
+    padding: 5px;
+  }
+}
+
+.annotation-tags {
+  color: @purple;
+}
+
+.graph-series-override {
+  input {
+    float: left;
+    margin-right: 10px;
+  }
+  .graph-series-override-option {
+    float: left;
+    padding: 2px 6px;
+  }
+  .graph-series-override-selector {
+    float: left;
+  }
+}
+
+.graph-tooltip {
+  .graph-tooltip-time {
+    text-align: center;
+    font-weight: bold;
+    position: relative;
+    top: -3px;
+  }
+
+  .graph-tooltip-value {
+    font-weight: bold;
+    float: right;
+    padding-left: 10px;
+  }
+}
