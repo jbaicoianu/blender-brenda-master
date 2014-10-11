@@ -15,6 +15,5 @@ define([
   './dashboard/dashboardKeyBindings',
   './dashboard/dashboardSrv',
   './dashboard/dashboardViewStateSrv',
-  './socketSrv',
 ],
 function () {});

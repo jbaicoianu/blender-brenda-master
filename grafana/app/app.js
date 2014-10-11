@@ -11,10 +11,8 @@ define([
   'angular-route',
   'angular-strap',
   'angular-dragdrop',
-  'angular-file-upload',
   'extend-jquery',
   'bindonce',
-  'socketio'
 ],
 function (angular, $, _, appLevelRequire, config) {
 
@@ -68,7 +66,6 @@ function (angular, $, _, appLevelRequire, config) {
     'ngDragDrop',
     'grafana',
     'pasvaz.bindonce',
-    'angularFileUpload'
   ];
 
   var module_types = ['controllers', 'directives', 'factories', 'services', 'filters', 'routes'];

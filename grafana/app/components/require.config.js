@@ -18,7 +18,6 @@ require.config({
     'angular-route':          '../vendor/angular/angular-route',
     'angular-dragdrop':       '../vendor/angular/angular-dragdrop',
     'angular-strap':          '../vendor/angular/angular-strap',
-    'angular-file-upload':    '../vendor/angular/angular-file-upload',
     timepicker:               '../vendor/angular/timepicker',
     datepicker:               '../vendor/angular/datepicker',
     bindonce:                 '../vendor/angular/bindonce',
@@ -27,7 +26,6 @@ require.config({
     lodash:                   'components/lodash.extended',
     'lodash-src':             '../vendor/lodash',
     bootstrap:                '../vendor/bootstrap/bootstrap',
-    'socketio':                 'components/socketio',
     jquery:                   '../vendor/jquery/jquery-2.1.1.min',
     'jquery-ui':              '../vendor/jquery/jquery-ui-1.10.3',
     
@@ -73,11 +71,6 @@ require.config({
     jquery: {
       exports: 'jQuery'
     },
-    
-    socketio: {
-      exports: 'io'
-    },
-    
 
     // simple dependency declaration
     //
@@ -97,7 +90,6 @@ require.config({
     'angular-resource':     ['angular'],
     'angular-route':        ['angular'],
     'angular-touch':        ['angular'],
-    'angular-file-upload':  ['angular'],
     'bindonce':             ['angular'],
     'angular-strap':        ['angular', 'bootstrap','timepicker', 'datepicker'],
     'angularFileUpload':    ['angular'],
