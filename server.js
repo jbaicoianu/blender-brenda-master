@@ -70,7 +70,7 @@ app.use(express.session({secret: config.session_secret})); // FIXME - move to co
                                               // v0.2 shouldn't need this
 app.use(passport.session());
 app.use(passport.authenticate('basic'));
-app.use(express.static(__dirname + '/grafana/src'));   // set the static files location
+app.use(express.static(__dirname + '/grafana/dist'));   // set the static files location
 
 // make sure children die
 var children = []; // array to store references to child processes so we can make sure they die
