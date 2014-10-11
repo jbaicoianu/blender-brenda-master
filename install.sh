@@ -1,3 +1,4 @@
+git submodule update --init
 cd grafana
 npm install
 npm install -g grunt-cli
