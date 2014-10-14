@@ -5,6 +5,7 @@
 define(['settings'], function(Settings) {
   // "use strict";
 
+  var dbserver = document.location.protocol.toString() + '//' + document.location.hostname.toString() + ':8086';
   return new Settings({
 
       /* Data sources
@@ -17,17 +18,16 @@ define(['settings'], function(Settings) {
       */
 
       // InfluxDB example setup (the InfluxDB databases specified need to exist)
-      
       datasources: {
         influxdb: {
           type: 'influxdb',
-          url: "http://localhost:8086/db/brenda_jobs",
+          url: dbserver + "/db/brenda_jobs",
           username: 'root',
           password: 'root',
         },
         grafana: {
           type: 'influxdb',
-          url: "http://localhost:8086/db/grafana",
+          url: dbserver + "/db/grafana",
           username: 'root',
           password: 'root',
           grafanaDB: true
