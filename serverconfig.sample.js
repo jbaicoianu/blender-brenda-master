@@ -16,7 +16,12 @@ var config = {
     // brenda_work: __dirname + '/utils/test.sh'
     // brenda_run: __dirname + '/utils/test.sh'
     brenda_work: 'brenda-work',
-    brenda_run: 'brenda-run'
+    brenda_run: 'brenda-run',
+    template_dir: __dirname + '/templates/brenda/',
+    jobdata_dir: __dirname + '/jobdata/',
+    scripts_dir: __dirname + '/utils/',
+    build_jobfile: __dirname + '/utils/test.sh',
+
 };
 
 module.exports = config;

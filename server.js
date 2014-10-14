@@ -1,6 +1,6 @@
 // server.js
 // config
-var config = require('./config');
+var config = require('./serverconfig');
 // requires
 var express = require('express');
 var morgan = require('morgan');
