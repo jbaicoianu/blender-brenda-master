@@ -2,75 +2,26 @@
 // config
 var config = require('./serverconfig');
 // requires
-var express = require('express');
-var morgan = require('morgan');
-var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
-var passport = require('passport');
-var basicStrategy = require('passport-http').BasicStrategy;
-var spawn = require('child_process').spawn;
-var busboy = require('connect-busboy');
-var fs = require('fs');
+var express         = require('express'),
+    morgan          = require('morgan'),
+    passport        = require('passport'),
+    basicStrategy   = require('passport-http').BasicStrategy,
+    spawn           = require('child_process').spawn,
+    busboy          = require('connect-busboy'),
+    fs              = require('fs'),
+    express_session = require('express-session'),
+    cookieParser    = require('cookie-parser'),
+    app             = express(),                       
+    server          = app.listen(config.port),
+    io              = require('socket.io').listen(server),
+    users           = config.users;
 
-var app = express();                          
-
-var server = app.listen(config.port);
-// TODO - add proper socket auth in 0.2
-var io = require('socket.io').listen(server);
-
-// set up logging and json parsing
-app.use(morgan('dev'));                         // log every request to the console
+// file handler
 app.use(busboy());
-app.use(methodOverride());
 
-// set up authentication
-
-app.use(passport.initialize());
-
-// users are in config 
-// TODO v0.2 - get user from redis, use token based auth instead of cookies
-var users = config.users;
-
-var findByUsername = function(username, fn){
-      for (var i = 0, len = users.length; i < len; i++) {
-        var user = users[i];
-            if (user.username === username) {
-              return fn(null, user);
-            }
-      }
-      return fn(null, null);
-};
-
-passport.use(new basicStrategy({
-  },
-  function(username, password, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
-       
-      // Find the user by username.  If there is no user with the given
-      // username, or the password is not correct, set the user to `false` to
-      // indicate failure.  Otherwise, return the authenticated `user`.
-      findByUsername(username, function(err, user) {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false); }
-        if (user.password != password) { return done(null, false); }
-        return done(null, user);
-      });
-    });
-  }
-));
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-app.use(express.cookieParser());
-app.use(express.session({secret: config.session_secret})); // FIXME - move to config for now
-                                              // v0.2 shouldn't need this
-app.use(passport.session());
-app.use(passport.authenticate('basic'));
-app.use(express.static(__dirname + '/grafana/dist'));   // set the static files location
+// set up authentication and then static files
+require('./server/auth')(app, config, passport, basicStrategy, cookieParser, express_session);
+app.use(express.static(__dirname + '/grafana/dist')); 
 
 // make sure children die
 var children = []; // array to store references to child processes so we can make sure they die
@@ -81,17 +32,6 @@ process.on('exit', function() {
   });
 });
 
-// var sioCookieParser = express.cookieParser(config.session_secret);
-// socket.set('authorization', function(data, accept) {
-//   if (data.headers.cookie) {
-//     data.cookie = sioCookieParser(data, {}, function(err) {
-      
-//     });
-//     //data.sessionID = data.cookie['connect.sid'];
-//     console.log(data.cookies)
-//     console.log(data.sessionID);
-//   }
-// });
 
 var client_id = false;
 // socket listeners
@@ -110,25 +50,25 @@ io.on('connection', function(client) {
   });
 });
 
-
+// child process spawners
 var submitJob = function(client, jobargs) {
-  var args = [];
-  if (jobargs.jobtype == 'animation') {
-    args = ['-T', config.template_dir + 'animation', '-e', jobargs.numframes, '-d', 'push'];
-  }
-  else if (jobargs.jobtype == 'subframe') {
-    args = ['-T', config.template_dir + 'subframe', '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY, '-d', 'push'];
-  }
-  else if (jobargs.jobtype == 'bake') {
-    args = ['-T', config.template_dir + 'bake', '-e', jobargs.numobjects, '-d', 'push'];
-  }
-  var child = spawn(config.brenda_work, args); // change to brenda-work
-  children.push(child);
-  child.stdout.on('data', function(data) {
-    // emit stdout to the client who started this request
-    console.log('stdout: ' + data);
-    client.emit('stdout', data.toString());
-  });
+    var args = [];
+    if (jobargs.jobtype == 'animation') {
+      args = ['-T', config.template_dir + 'animation', '-e', jobargs.numframes, '-d', 'push'];
+    }
+    else if (jobargs.jobtype == 'subframe') {
+      args = ['-T', config.template_dir + 'subframe', '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY, '-d', 'push'];
+    }
+    else if (jobargs.jobtype == 'bake') {
+      args = ['-T', config.template_dir + 'bake', '-e', jobargs.numobjects, '-d', 'push'];
+    }
+    var child = spawn(config.brenda_work, args); // change to brenda-work
+    children.push(child);
+    child.stdout.on('data', function(data) {
+      // emit stdout to the client who started this request
+      console.log('stdout: ' + data);
+      client.emit('stdout', data.toString());
+    });
 };
 
 var spawnInstance = function(client, instargs) {
@@ -141,8 +81,6 @@ var spawnInstance = function(client, instargs) {
   });
 };
 
-// api routes
-
 var buildJobFile = function(client, jobname) {
   var args = [config.jobdata_dir + jobname];
   console.log(args);
@@ -150,9 +88,12 @@ var buildJobFile = function(client, jobname) {
   children.push(child);
   child.stdout.on('data', function(data) {
     console.log('stdout: ' + data);
-    io.sockets.connected[client_id].emit('stdout', data.toString());
+    io.sockets.connected[client].emit('stdout', data.toString());
   });
 };
+
+
+// api routes
 
 app.post('/api/upload:client_id', function(req, res) {
     var client_id = req.params.client_id;
