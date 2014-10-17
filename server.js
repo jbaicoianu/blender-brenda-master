@@ -3,7 +3,6 @@
 var config = require('./serverconfig');
 // requires
 var express         = require('express'),
-    morgan          = require('morgan'),
     passport        = require('passport'),
     basicStrategy   = require('passport-http').BasicStrategy,
     spawn           = require('child_process').spawn,
