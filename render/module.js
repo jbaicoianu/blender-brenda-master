@@ -210,25 +210,7 @@ define([
       instanceprice: 0.001
     };
     $scope.percent = 0;
-    // $scope.uploadFile = function(files) {
-    //   var uploadUrl = '/api/upload' + $scope.client_id;
-    //   var fd = new FormData();
-    //   //Take the first selected file
-    //   fd.append("file", files[0]);
-    //   $http.post(uploadUrl, fd, {
-    //     withCredentials: true,
-    //     headers: {
-    //       'Content-Type': undefined
-    //     },
-    //     transformRequest: angular.identity
-    //   })
-    //   .success(function() {
-    //     $scope.percent = 'success';
-    //   })
-    //   .error(function() {
-    //     $scope.percent = 'error';
-    //   });
-    // };
+
     $scope.uploadFile = function(files) {
       var uploadUrl = '/api/upload' + $scope.client_id;
       var fd = new FormData;
@@ -247,23 +229,6 @@ define([
       xhr.open('POST', uploadUrl);
       xhr.send(fd);
     };
-    // $scope.onFileSelect = function($files) {
-    //     //$files: an array of files selected, each file has name, size, and type.
-    //     for (var i = 0; i < $files.length; i++) {
-    //         var $file = $files[i];
-    //         $upload.upload({
-    //                 url: '/api/upload' + $scope.client_id,
-    //                 file: $file,
-    //             })
-    //             .progress(function(evt) {
-    //                 $scope.percent = 'percent: ' + parseInt(100.0 * evt.loaded / evt.total, 10);
-    //             })
-    //             .success(function(data, status, headers, config) {
-    //                 // file is uploaded successfully
-    //                 $scope.percent = 'status code: ' + status;
-    //             });
-    //     }
-    // };
     $scope.submitAnimJob = function() {
       socket.emit('submitjob', $scope.animationArgs);
     };
@@ -276,6 +241,7 @@ define([
     $scope.submitInstanceSpawn = function() {
       socket.emit('spawninstance', $scope.instanceArgs);
     };
+    
     // panel init
     $scope.init = function() {
       panelSrv.init(this);

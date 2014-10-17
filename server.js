@@ -4,7 +4,6 @@ var config = require('./serverconfig');
 // requires
 var express = require('express');
 var morgan = require('morgan');
-// var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
 var passport = require('passport');
 var basicStrategy = require('passport-http').BasicStrategy;
 var spawn = require('child_process').spawn;
