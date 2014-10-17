@@ -4,7 +4,7 @@ var config = require('./serverconfig');
 // requires
 var express = require('express');
 var morgan = require('morgan');
-var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
+// var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
 var passport = require('passport');
 var basicStrategy = require('passport-http').BasicStrategy;
 var spawn = require('child_process').spawn;
@@ -18,9 +18,8 @@ var server = app.listen(config.port);
 var io = require('socket.io').listen(server);
 
 // set up logging and json parsing
-app.use(morgan('dev'));                         // log every request to the console
+app.use(morgan('dev'));         // log every request to the console
 app.use(busboy());
-app.use(methodOverride());
 
 // set up authentication
 
@@ -81,18 +80,6 @@ process.on('exit', function() {
   });
 });
 
-// var sioCookieParser = express.cookieParser(config.session_secret);
-// socket.set('authorization', function(data, accept) {
-//   if (data.headers.cookie) {
-//     data.cookie = sioCookieParser(data, {}, function(err) {
-      
-//     });
-//     //data.sessionID = data.cookie['connect.sid'];
-//     console.log(data.cookies)
-//     console.log(data.sessionID);
-//   }
-// });
-
 var client_id = false;
 // socket listeners
 io.on('connection', function(client) { 
@@ -110,6 +97,7 @@ io.on('connection', function(client) {
   });
 });
 
+// child process spawners
 
 var submitJob = function(client, jobargs) {
   var args = [];
@@ -141,8 +129,6 @@ var spawnInstance = function(client, instargs) {
   });
 };
 
-// api routes
-
 var buildJobFile = function(client, jobname) {
   var args = [config.jobdata_dir + jobname];
   console.log(args);
@@ -153,6 +139,8 @@ var buildJobFile = function(client, jobname) {
     io.sockets.connected[client_id].emit('stdout', data.toString());
   });
 };
+
+// api routes
 
 app.post('/api/upload:client_id', function(req, res) {
     var client_id = req.params.client_id;

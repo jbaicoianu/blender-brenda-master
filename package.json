@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "A node.js backend to serve grafana and provide a RESTful API for https://github.com/jbaicoianu/blender-brenda-master/",
   "main": "server.js",
-  "repository": "",
+  "repository": "https://github.com/bioid/blender-brenda-master/",
   "author": "Brandon Hinshaw <bkhinshaw@gmail.com>",
   "dependencies": {
     "async": "~0.2.8",
@@ -13,11 +13,12 @@
     "method-override": "2.2.0",
     "socket.io": "1.1.0",
     "passport": "0.2.1",
-    "passport-local": "1.0.0",
     "passport-http": "0.2.2",
+    "passport-local": "1.0.0",
+    "passport-socketio": "3.0.2",
     "connect-busboy": "0.0.2",
-    "fs": "0.0.2",
     "express-jwt": "0.4.0",
-    "jsonwebtoken": "1.1.2"
+    "jsonwebtoken": "1.1.2",
+    "connect-sqlite3": "0.9.3"
   }
 }
