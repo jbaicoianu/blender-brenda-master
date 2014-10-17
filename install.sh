@@ -8,5 +8,5 @@ cd ..
 npm install
 ln -s `pwd`/render/ `pwd`/grafana/dist/app/panels/render
 cp `pwd`/config.grafana.js `pwd`/grafana/dist/config.js
-cp `pwd`/serverconfig.sample.js `pwd`/server/serverconfig.js
+cp `pwd`/serverconfig.sample.js `pwd`/serverconfig.js
 mkdir jobdata
