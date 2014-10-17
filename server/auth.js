@@ -1,4 +1,4 @@
-module.exports = function(app, config, passport, basicStrategy, cookieParser, express_session) {
+module.exports = function(app, config, passport, basicStrategy, cookieParser, session) {
   var users = config.users;
   var findByUsername = function(username, fn){
         for (var i = 0, len = users.length; i < len; i++) {
@@ -32,14 +32,8 @@ module.exports = function(app, config, passport, basicStrategy, cookieParser, ex
     done(null, user);
   });
   
-  app.use(cookieParser());
-  var sessionMiddleware = express_session({
-    key: 'express.sid',
-    secret: config.session_secret,
-    resave: true,
-    saveUninitialized: true
-  });
-  app.use(sessionMiddleware);
+  app.use(cookieParser);
+  app.use(session);
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(passport.authenticate('basic'));

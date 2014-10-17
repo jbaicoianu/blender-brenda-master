@@ -9,6 +9,7 @@ var express         = require('express'),
     busboy          = require('connect-busboy'),
     fs              = require('fs'),
     express_session = require('express-session'),
+    SQLiteStore     = require('connect-sqlite3')(express_session),
     cookieParser    = require('cookie-parser'),
     app             = express(),                       
     server          = app.listen(config.port),
@@ -19,7 +20,16 @@ var express         = require('express'),
 app.use(busboy());
 
 // set up authentication and then static files
-require('./server/auth')(app, config, passport, basicStrategy, cookieParser, express_session);
+var sessionStore = new SQLiteStore();
+var cParser = new cookieParser(config.session_secret);
+var session = express_session({
+    key: config.session_key,
+    store: sessionStore,
+    secret: config.session_secret,
+    resave: true,
+    saveUninitialized: true
+  });
+require('./server/auth')(app, config, passport, basicStrategy, cParser, session);
 app.use(express.static(__dirname + '/grafana/dist')); 
 
 // make sure children die
@@ -30,15 +40,25 @@ process.on('exit', function() {
     child.kill();
   });
 });
-
-
-var client_id = false;
-// socket listeners
+// socket setup
+io.use(function(socket, next) {
+  // get the session info from the request and assign it to the socket
+  session(socket.request, {}, next);
+}).use(function(socket, next) {
+  // checks if the socket has a valid session and user, and accepts or denies the
+  // connection accordingly
+  var ip_address = socket.request.headers['x-forwarded-for'];
+  if (socket.request.session && socket.request.session.passport && socket.request.session.passport.user) {
+    console.log('Accepting socket connection from user:', socket.request.session.passport.user.username);
+    return next();
+  }
+  console.log('Denying socket connection from unauthorized user at', ip_address);
+  return next(new Error("Unauthorized user"), false);
+});
+// event listeners
 io.on('connection', function(client) { 
-  client_id = client.id;
-  //socket(client.id).emit('stdout', 'test');
   client.emit('connected', client.id);        
-    console.log('client connected');
+    console.log('client', client.id, 'connected');
   client.on('submitjob', function(data) {
     console.log('job submit, data: ', data);
     submitJob(client, data);
@@ -48,6 +68,10 @@ io.on('connection', function(client) {
     spawnInstance(client, data);
   });
 });
+
+
+// var client_id = false;
+// socket listeners
 
 // child process spawners
 var submitJob = function(client, jobargs) {
