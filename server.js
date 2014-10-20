@@ -49,7 +49,7 @@ io.use(function(socket, next) {
   // connection accordingly
   var ip_address = socket.request.headers['x-forwarded-for'];
   if (socket.request.session && socket.request.session.passport && socket.request.session.passport.user) {
-    console.log('Accepting socket connection from user:', socket.request.session.passport.user.username);
+    console.log('Accepting socket connection from user:', socket.request.session.passport.user.username, ip_address);
     return next();
   }
   console.log('Denying socket connection from unauthorized user at', ip_address);
@@ -75,23 +75,23 @@ io.on('connection', function(client) {
 
 // child process spawners
 var submitJob = function(client, jobargs) {
-    var args = [];
-    if (jobargs.jobtype == 'animation') {
-      args = ['-T', config.template_dir + 'animation', '-e', jobargs.numframes, '-d', 'push'];
-    }
-    else if (jobargs.jobtype == 'subframe') {
-      args = ['-T', config.template_dir + 'subframe', '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY, '-d', 'push'];
-    }
-    else if (jobargs.jobtype == 'bake') {
-      args = ['-T', config.template_dir + 'bake', '-e', jobargs.numobjects, '-d', 'push'];
-    }
-    var child = spawn(config.brenda_work, args); // change to brenda-work
-    children.push(child);
-    child.stdout.on('data', function(data) {
-      // emit stdout to the client who started this request
-      console.log('stdout: ' + data);
-      client.emit('stdout', data.toString());
-    });
+  var args = [];
+  if (jobargs.jobtype == 'animation') {
+    args = ['-T', config.template_dir + 'animation', '-e', jobargs.numframes, '-d', 'push'];
+  }
+  else if (jobargs.jobtype == 'subframe') {
+    args = ['-T', config.template_dir + 'subframe', '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY, '-d', 'push'];
+  }
+  else if (jobargs.jobtype == 'bake') {
+    args = ['-T', config.template_dir + 'bake', '-e', jobargs.numobjects, '-d', 'push'];
+  }
+  var child = spawn(config.brenda_work, args); // change to brenda-work
+  children.push(child);
+  child.stdout.on('data', function(data) {
+    // emit stdout to the client who started this request
+    console.log('stdout: ' + data);
+    client.emit('stdout', data.toString());
+  });
 };
 
 var spawnInstance = function(client, instargs) {
@@ -119,20 +119,19 @@ var buildJobFile = function(client, jobname) {
 // api routes
 
 app.post('/api/upload:client_id', function(req, res) {
-    var client_id = req.params.client_id;
-    //console.log(req.busboy);
-    req.pipe(req.busboy);
-    req.busboy.on('file', function(fieldname, file, filename) {
-      console.log(config.jobdata_dir + filename);
-      var fstream = fs.createWriteStream(config.jobdata_dir + filename); 
-      file.pipe(fstream);
-      fstream.on('close', function () {
-          // file upload completed (hopefully)
-          buildJobFile(client_id, filename);
-          res.redirect('back');
-      });
+  var client_id = req.params.client_id;
+  //console.log(req.busboy);
+  req.pipe(req.busboy);
+  req.busboy.on('file', function(fieldname, file, filename) {
+    console.log(config.jobdata_dir + filename);
+    var fstream = fs.createWriteStream(config.jobdata_dir + filename); 
+    file.pipe(fstream);
+    fstream.on('close', function () {
+        // file upload completed (hopefully)
+        buildJobFile(client_id, filename);
+        res.redirect('back');
     });
-    
+  });
 });
 
 

@@ -29,16 +29,14 @@
             height: 150px;
             overflow: auto;
         }
-        /*.dragover {*/
-        /*    background-color: #00cc00;*/
-        /*}*/
-        /*.filedrop {*/
-        /*    width: 175px;*/
-        /*    height: 100px;*/
-        /*    border: 1px dotted #cccccc;*/
-        /*    border-radius: 5px;*/
-        /*    text-align: center;*/
-        /*}*/
+        #jobqueue #stdout {
+            display:inline-block;   
+        }
+        .jobform {
+            display: inline-block !important;
+            float: none !important;
+        }
+
     </style>
     <!-- Side Menu -->
     <div class="sidemenu renderopts">
@@ -62,43 +60,39 @@
     </div>
     <!-- Submit Job -->
     <div class="renderopts" id="jobqueue" ng-show="tab == 'jobqueue'">
-        <h3>Queue Jobs</h3>
-        <select class="input-sm" ng-model="jobstate" ng-options="s.value for s in jobtypes">
-        </select>
-        <div ng-hide="jobstate.value!='animation'">
-            <form novalidate class="simple-form">
-                numframes:
-                <input type="number" min="1" ng-model="animationArgs.numframes" id="numframes" class='rangeinput' />
-                <br>
-                <button type="submit" class="btn btn-primary btn-lg" ng-click="submitAnimJob()">
-                    Populate Jobs
-                </button>
-                <pre>{{ animationArgs }}</pre>
-            </form>
-        </div>
-        <div ng-hide="jobstate.value!='subframe'">
-            <form novalidate class="simple-form">
-                numframes:
-                <input type="number" min="1" ng-model="subframeArgs.numframes" id="numframes" class='rangeinput' />tilesX:
-                <input type="number" min="1" ng-model="subframeArgs.tilesX" id="tilesx" class='rangeinput' />tilesY:
-                <input type="number" min="1" ng-model="subframeArgs.tilesY" id="tilesy" class='rangeinput' />
-                <br>
-                <button type="submit" class="btn btn-primary btn-lg" ng-click="submitSubframeJob()">
-                    Populate Jobs
-                </button>
-                <pre>{{ subframeArgs }}</pre>
-            </form>
-        </div>
-        <div ng-hide="jobstate.value!='bake'">
-            <form novalidate class="simple-form">
-                numobjects:
-                <input type="number" min="1" ng-model="bakeArgs.numobjects" id="numobjects" class='rangeinput' />
-                <br>
-                <button type="submit" class="btn btn-primary btn-lg" ng-click="submitBakeJob()">
-                    Populate Jobs
-                </button>
-                <pre>{{ bakeArgs }}</pre>
-            </form>
+        <div class="renderopts">
+            <h3>Queue Jobs</h3>
+            <select class="input-sm" ng-model="jobstate" ng-options="s.value for s in jobtypes">
+            </select>
+                <form novalidate class="simple-form" ng-hide="jobstate.value!='animation'" class="jobform">
+                    numframes:
+                    <input type="number" min="1" ng-model="animationArgs.numframes" id="numframes" class='rangeinput' />
+                    <br>
+                    <button type="submit" class="btn btn-primary btn-lg" ng-click="submitAnimJob()">
+                        Populate Jobs
+                    </button>
+                    <pre>{{ animationArgs }}</pre>
+                </form>
+                <form novalidate class="simple-form" ng-hide="jobstate.value!='subframe'" class="jobform">
+                    numframes:
+                    <input type="number" min="1" ng-model="subframeArgs.numframes" id="numframes" class='rangeinput' />tilesX:
+                    <input type="number" min="1" ng-model="subframeArgs.tilesX" id="tilesx" class='rangeinput' />tilesY:
+                    <input type="number" min="1" ng-model="subframeArgs.tilesY" id="tilesy" class='rangeinput' />
+                    <br>
+                    <button type="submit" class="btn btn-primary btn-lg" ng-click="submitSubframeJob()">
+                        Populate Jobs
+                    </button>
+                    <pre>{{ subframeArgs }}</pre>
+                </form>
+                <form novalidate class="simple-form" ng-hide="jobstate.value!='bake'" class="jobform">
+                    numobjects:
+                    <input type="number" min="1" ng-model="bakeArgs.numobjects" id="numobjects" class='rangeinput' />
+                    <br>
+                    <button type="submit" class="btn btn-primary btn-lg" ng-click="submitBakeJob()">
+                        Populate Jobs
+                    </button>
+                    <pre>{{ bakeArgs }}</pre>
+                </form>
         </div>
         <div class="renderopts" id="stdout">
             stdout:
@@ -128,7 +122,7 @@
         </div>
         <div class="renderopts" id="stdout">
             <pre> {{ instanceArgs }} </pre>
-            <pre> {{ client_id }} </pre>
+            <pre> socket id: {{ client_id }} </pre>
             stdout:
             <span ng-repeat="line in stdout track by $index">
                 {{ line }}

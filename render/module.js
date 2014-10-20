@@ -136,6 +136,9 @@ define([
     socket.on('connected', function(data) {
       $scope.client_id = data;
     });
+    socket.on('disconnect', function(data) {
+      $scope.client_id = false;
+    })
     socket.on('stdout', function(data) {
       $scope.stdout = $scope.stdout.concat(data);
     });
@@ -230,16 +233,24 @@ define([
       xhr.send(fd);
     };
     $scope.submitAnimJob = function() {
-      socket.emit('submitjob', $scope.animationArgs);
+      if ($scope.client_id) {
+        socket.emit('submitjob', $scope.animationArgs);
+      }
     };
     $scope.submitSubframeJob = function() {
-      socket.emit('submitjob', $scope.subframeArgs);
+      if ($scope.client_id) {
+        socket.emit('submitjob', $scope.subframeArgs);
+      }
     };
     $scope.submitBakeJob = function() {
-      socket.emit('submitjob', $scope.bakeArgs);
+      if ($scope.client_id) {
+        socket.emit('submitjob', $scope.bakeArgs);
+      }
     };
     $scope.submitInstanceSpawn = function() {
-      socket.emit('spawninstance', $scope.instanceArgs);
+      if ($scope.client_id) {
+        socket.emit('spawninstance', $scope.instanceArgs);
+      }
     };
     
     // panel init
