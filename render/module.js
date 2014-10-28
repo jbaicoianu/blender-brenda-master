@@ -131,20 +131,30 @@ define([
     _.defaults($scope.panel, _d);
     // socket setup
     $scope.client_id = false;
+    $scope.connected = false;
     $scope.stdout = [];
     $scope.exitstate = [];
     socket.on('connected', function(data) {
-      $scope.client_id = data;
+      $scope.$evalAsync(function() {
+        $scope.client_id = data;
+        $scope.connected = true;
+      });
     });
     socket.on('disconnect', function(data) {
-      $scope.client_id = false;
-    })
+      $scope.$evalAsync(function() {
+        $scope.client_id = false;
+        $scope.connected = false;
+      });
+    });
     socket.on('stdout', function(data) {
       $scope.stdout = $scope.stdout.concat(data);
     });
     socket.on('exit', function(data) {
       $scope.exitstate = $scope.exitstate.concat(data);
     });
+    socket.on('priceupdate', function(data) {
+      $scope.current_price = 'Current prices: '+ data;
+    })
     // job queue args
     $scope.jobtypes = [{
       value: 'animation',
@@ -252,7 +262,12 @@ define([
         socket.emit('spawninstance', $scope.instanceArgs);
       }
     };
-    
+    $scope.getInstancePrice = function(instancetype) {
+      $scope.current_price = "Checking..."
+      if ($scope.client_id) {
+        socket.emit('checkprice', $scope.instanceArgs.instancetype)
+      }
+    };
     // panel init
     $scope.init = function() {
       panelSrv.init(this);

@@ -67,10 +67,13 @@ io.on('connection', function(client) {
     console.log('instance submit, data: ', data);
     spawnInstance(client, data);
   });
+  client.on('checkprice', function(data) {
+    console.log('price check', data);
+    checkInstancePrice(client, data);
+  });
 });
 
 
-// var client_id = false;
 // socket listeners
 
 // child process spawners
@@ -112,6 +115,22 @@ var buildJobFile = function(client, jobname) {
   child.stdout.on('data', function(data) {
     console.log('stdout: ' + data);
     io.sockets.connected[client].emit('stdout', data.toString());
+  });
+};
+
+var checkInstancePrice = function(client, instancetype) {
+  var args = ['-i', instancetype, 'price'];
+  console.log(args);
+  var child = spawn('brenda-run', args);
+  child.stdout.on('data', function(data) {
+    console.log(data.toString());
+    var lines = data.toString().split('\n');
+    var instType = lines[0].split(" ")[5];
+    var prices = []
+    for (var i=1; i < 4; i++) {
+      prices.push(lines[i].split(" ")[2]);
+    }
+    client.emit('priceupdate', prices);
   });
 };
 
