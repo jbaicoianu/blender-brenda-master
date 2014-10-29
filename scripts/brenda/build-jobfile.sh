@@ -7,19 +7,19 @@ S3BUCKETNAME=elation-render-data
 if [ ! -z $JOBNAME ]; then
 	if [ -d jobdata/$JOBNAME ]; then
 		ZIPFILE="$JOBNAME.tar.gz"
-		if [ ! -f "$JOBROOT/$ZIPFILE" ] || [ "$JOBROOT/$JOBNAME/" -nt "$JOBROOT/$ZIPFILE" ]; then
+		NEWER=$(find "$JOBROOT/$JOBNAME/" -cnewer "$JOBROOT/$ZIPFILE")
+		if [ ! -f "$JOBROOT/$ZIPFILE" ] || [ ! -z "$NEWER" ]; then
 			echo -n "Building $ZIPFILE..."
 			cd "$JOBROOT/$JOBNAME"
 			tar czf "../$ZIPFILE" .
 			echo "done"
-			cd ..
+			cd ../..
 		else
 			echo "$ZIPFILE already up to date, skipping..."
 		fi
 		echo -n "Uploading $ZIPFILE to s3..."
 		s3cmd put "$JOBROOT/$ZIPFILE" s3://$S3BUCKETNAME
 		echo "done"
-		cd ..
 	else
 		echo ERROR: missing $JOBROOT/$JOBNAME
 		exit 1
