@@ -21,7 +21,7 @@ var express         = require('express'),
 app.use(busboy());
 
 // set up authentication and then static files
-var sessionStore = new SQLiteStore();
+var sessionStore = new SQLiteStore({'dir': __dirname + '/server'});
 var cParser = new cookieParser(config.session_secret);
 var session = express_session({
     key: config.session_key,
