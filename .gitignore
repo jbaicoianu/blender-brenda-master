@@ -2,3 +2,4 @@ node_modules
 serverconfig.js
 jobdata/*
 sessions.db
+projects.json
