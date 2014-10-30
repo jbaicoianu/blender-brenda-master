@@ -12,11 +12,15 @@ var express         = require('express'),
     express_session = require('express-session'),
     SQLiteStore     = require('connect-sqlite3')(express_session),
     cookieParser    = require('cookie-parser'),
+    BrendaProjects  = require('./server/brenda-projects')(fs),
     app             = express(),                       
     server          = app.listen(config.port),
-    io              = require('socket.io').listen(server),
-    users           = config.users;
-
+    io              = require('socket.io').listen(server);
+setTimeout(function(){
+  BrendaProjects.addProject('321', 'http://qwerqwer', function() {
+    console.log(BrendaProjects.projects);
+  });
+}, 5000);
 // file handler
 app.use(busboy());
 
