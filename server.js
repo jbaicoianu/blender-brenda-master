@@ -1,7 +1,7 @@
 // server.js
 // config
 global.dirname = __dirname;
-var config = require('./config/serverconfig');
+global.config = require('./config/serverconfig');
 // requires
 var express         = require('express'),
     passport        = require('passport'),
@@ -14,37 +14,34 @@ var express         = require('express'),
     cookieParser    = require('cookie-parser'),
     BrendaProjects  = require('./server/brenda-projects')(fs),
     app             = express(),                       
-    server          = app.listen(config.port),
-    io              = require('socket.io').listen(server);
-setTimeout(function(){
-  BrendaProjects.addProject('321', 'http://qwerqwer', function() {
-    console.log(BrendaProjects.projects);
-  });
-}, 5000);
+    server          = app.listen(global.config.port),
+    io              = require('socket.io').listen(server),
+    procs           = require('./server/processes')(spawn, io);
+
 // file handler
 app.use(busboy());
 
 // set up authentication and then static files
 var sessionStore = new SQLiteStore({'dir': __dirname + '/server'});
-var cParser = new cookieParser(config.session_secret);
+var cParser = new cookieParser(global.config.session_secret);
 var session = express_session({
-    key: config.session_key,
+    key: global.config.session_key,
     store: sessionStore,
-    secret: config.session_secret,
+    secret: global.config.session_secret,
     resave: true,
     saveUninitialized: true
   });
-require('./server/auth')(app, config, passport, basicStrategy, cParser, session);
+require('./server/auth')(app, global.config, passport, basicStrategy, cParser, session);
 app.use(express.static(__dirname + '/grafana/dist')); 
 
 // make sure children die
-var children = []; // array to store references to child processes so we can make sure they die
 process.on('exit', function() {
-  console.log('killing', children.length, 'child processes');
-  children.forEach(function(child) {
+  console.log('killing', procs.children.length, 'child processes');
+  procs.children.forEach(function(child) {
     child.kill();
   });
 });
+
 // socket setup
 io.use(function(socket, next) {
   // get the session info from the request and assign it to the socket
@@ -60,103 +57,45 @@ io.use(function(socket, next) {
   console.log('Denying socket connection from unauthorized user at', ip_address);
   return next(new Error("Unauthorized user"), false);
 });
+
 // event listeners
 io.on('connection', function(client) { 
   client.emit('connected', client.id);        
     console.log('client', client.id, 'connected');
   client.on('submitjob', function(data) {
     console.log('job submit, data: ', data);
-    submitJob(client, data);
+    console.log(typeof(client));
+    procs.submitJob(client, data);
   });
   client.on('spawninstance', function(data) {
     console.log('instance submit, data: ', data);
-    spawnInstance(client, data);
+    procs.spawnInstance(client, data);
   });
   client.on('checkprice', function(data) {
     console.log('price check', data);
-    checkInstancePrice(client, data);
+    procs.checkInstancePrice(client, data);
   });
 });
-
-
-// socket listeners
-
-// child process spawners
-var submitJob = function(client, jobargs) {
-  var args = [];
-  if (jobargs.jobtype == 'animation') {
-    args = ['-T', config.template_dir + 'animation', '-e', jobargs.numframes, '-d', 'push'];
-  }
-  else if (jobargs.jobtype == 'subframe') {
-    args = ['-T', config.template_dir + 'subframe', '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY, '-d', 'push'];
-  }
-  else if (jobargs.jobtype == 'bake') {
-    args = ['-T', config.template_dir + 'bake', '-e', jobargs.numobjects, '-d', 'push'];
-  }
-  var child = spawn(config.brenda_work, args); // change to brenda-work
-  children.push(child);
-  child.stdout.on('data', function(data) {
-    // emit stdout to the client who started this request
-    console.log('stdout: ' + data);
-    client.emit('stdout', data.toString());
-  });
-};
-
-var spawnInstance = function(client, instargs) {
-  var args = ['-N', instargs.instancecount.num, '-i', instargs.instancetype, '-p', instargs.instanceprice, 'spot'];
-  var child = spawn(config.brenda_run, args);
-  children.push(child);
-  child.stdout.on('data', function(data) {
-    console.log('stdout: ' + data);
-    client.emit('stdout', data.toString());
-  });
-};
-
-var buildJobFile = function(client, jobname) {
-  var args = [config.jobdata_dir + jobname];
-  console.log(args);
-  var child = spawn(config.build_jobfile, args);
-  children.push(child);
-  child.stdout.on('data', function(data) {
-    console.log('stdout: ' + data);
-    io.sockets.connected[client].emit('stdout', data.toString());
-  });
-};
-
-var checkInstancePrice = function(client, instancetype) {
-  var args = ['-i', instancetype, 'price'];
-  console.log(args);
-  var child = spawn('brenda-run', args);
-  child.stdout.on('data', function(data) {
-    console.log(data.toString());
-    var lines = data.toString().split('\n');
-    var instType = lines[0].split(" ")[5];
-    var prices = []
-    for (var i=1; i < 4; i++) {
-      prices.push(lines[i].split(" ")[2]);
-    }
-    client.emit('priceupdate', prices);
-  });
-};
 
 
 // api routes
 
 app.post('/api/upload:client_id', function(req, res) {
   var client_id = req.params.client_id;
+  console.log(typeof(client_id));
   //console.log(req.busboy);
   req.pipe(req.busboy);
   req.busboy.on('file', function(fieldname, file, filename) {
-    console.log(config.jobdata_dir + filename);
-    var fstream = fs.createWriteStream(config.jobdata_dir + filename); 
+    console.log(global.config.jobdata_dir + filename);
+    var fstream = fs.createWriteStream(global.config.jobdata_dir + filename); 
     file.pipe(fstream);
     fstream.on('close', function () {
         // file upload completed (hopefully)
-        buildJobFile(client_id, filename);
+        procs.buildJobFile(client_id, filename);
         res.redirect('back');
     });
   });
 });
 
 
-console.log("server listening on", config.port);
+console.log("server listening on", global.config.port);
