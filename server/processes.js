@@ -48,15 +48,21 @@ Processes.prototype.checkInstancePrice = function(client, instancetype) {
   var args = ['-i', instancetype, 'price'];
   console.log(args);
   var child = spawn('brenda-run', args);
+  this.children.push(child);
   child.stdout.on('data', function(data) {
     console.log(data.toString());
     var lines = data.toString().split('\n');
-    var instType = lines[0].split(" ")[5];
-    var prices = []
-    for (var i=1; i < 4; i++) {
-      prices.push(lines[i].split(" ")[2]);
+    if (lines.length > 2) {
+      var instType = lines[0].split(" ")[5];
+      var prices = [];
+      for (var i=1; i < 4; i++) {
+        prices.push(lines[i].split(" ")[2]);
+      }
+      client.emit('priceupdate', prices);
     }
-    client.emit('priceupdate', prices);
+    else {
+      client.emit('priceupdate', 'No price info');
+    }
   });
 };
 
