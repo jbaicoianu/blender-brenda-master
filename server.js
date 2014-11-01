@@ -1,6 +1,6 @@
 // server.js
 // config
-var config = require('./serverconfig');
+var config = require('./config/serverconfig');
 // requires
 var express         = require('express'),
     passport        = require('passport'),
