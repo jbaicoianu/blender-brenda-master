@@ -21,6 +21,7 @@ var config = {
     template_dir:   global.dirname + '../templates/brenda/',
     jobdata_dir:    global.dirname + '../jobdata/',
     build_jobfile:  global.dirname + '../scripts/brenda/build-jobfile.sh',
+    projects_dir:   '/tmp/projects',
 
 };
 

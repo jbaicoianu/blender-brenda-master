@@ -22,6 +22,7 @@ var express         = require('express'),
 app.use(busboy());
 
 // set up authentication and then static files
+
 var sessionStore = new SQLiteStore({'dir': __dirname + '/server'});
 var cParser = new cookieParser(global.config.session_secret);
 var session = express_session({
@@ -35,14 +36,13 @@ require('./server/auth')(app, global.config, passport, basicStrategy, cParser, s
 app.use(express.static(__dirname + '/grafana/dist')); 
 
 // make sure children die
+
 process.on('exit', function() {
-  console.log('killing', procs.children.length, 'child processes');
-  procs.children.forEach(function(child) {
-    child.kill();
-  });
+  procs.killAll();
 });
 
 // socket setup
+
 io.use(function(socket, next) {
   // get the session info from the request and assign it to the socket
   session(socket.request, {}, next);
@@ -59,12 +59,13 @@ io.use(function(socket, next) {
 });
 
 // event listeners
+
 io.on('connection', function(client) { 
   client.emit('connected', client.id);        
-    console.log('client', client.id, 'connected');
+  console.log('client', client.id, 'connected');
+  client.emit('projectupdate', BrendaProjects.projects);
   client.on('submitjob', function(data) {
     console.log('job submit, data: ', data);
-    console.log(typeof(client));
     procs.submitJob(client, data);
   });
   client.on('spawninstance', function(data) {
@@ -75,6 +76,12 @@ io.on('connection', function(client) {
     console.log('price check', data);
     procs.checkInstancePrice(client, data);
   });
+  client.on('addProject', function(data) {
+    console.log('adding new project: ', data);
+    BrendaProjects.addProject(data, function(name) {
+      client.emit('projectadded', name);
+    });
+  });
 });
 
 
@@ -82,8 +89,6 @@ io.on('connection', function(client) {
 
 app.post('/api/upload:client_id', function(req, res) {
   var client_id = req.params.client_id;
-  console.log(typeof(client_id));
-  //console.log(req.busboy);
   req.pipe(req.busboy);
   req.busboy.on('file', function(fieldname, file, filename) {
     console.log(global.config.jobdata_dir + filename);

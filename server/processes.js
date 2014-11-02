@@ -53,7 +53,7 @@ Processes.prototype.checkInstancePrice = function(client, instancetype) {
     console.log(data.toString());
     var lines = data.toString().split('\n');
     if (lines.length > 2) {
-      var instType = lines[0].split(" ")[5];
+      //var instType = lines[0].split(" ")[5];
       var prices = [];
       for (var i=1; i < 4; i++) {
         prices.push(lines[i].split(" ")[2]);
@@ -63,6 +63,13 @@ Processes.prototype.checkInstancePrice = function(client, instancetype) {
     else {
       client.emit('priceupdate', 'No price info');
     }
+  });
+};
+
+Processes.prototype.killAll = function() {
+  console.log('killing', this.children.length, 'child processes');
+  this.children.forEach(function(child) {
+    child.kill();
   });
 };
 

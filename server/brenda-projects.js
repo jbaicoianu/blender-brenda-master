@@ -1,6 +1,6 @@
 
 module.exports = function(fs) {
-
+var mkdirp = require('mkdirp');
 var BrendaProjects = function() {
   this.projectFile = './server/projects.json';
   this.projects = {};
@@ -10,17 +10,14 @@ var BrendaProjects = function() {
   }.bind(this));
 };
 
-BrendaProjects.setData = function(err, data) {
-};
-
-BrendaProjects.prototype.addProject = function(name, url, callback) {
+BrendaProjects.prototype.addProject = function(name, callback) {
   if (this.projects.hasOwnProperty(name)) {
     throw new Error('Project already exists - choose a different name'); 
   }
   var projectId = Object.keys(this.projects).length; 
   var newProject = {};
   newProject[name] = {
-      'url': url,
+      'name': name,
       'dir': projectId // for now
   };
   for (var key in newProject) {
@@ -28,13 +25,21 @@ BrendaProjects.prototype.addProject = function(name, url, callback) {
       this.projects[key] = newProject[key];
     }
   }
-  this.write();
-  callback();
+  this.write(function() {
+    var pjpath = global.config.projects_dir + '/' + name;
+    mkdirp(pjpath + '/data', function(err) {
+      if (err) { console.log('error making dir', err); }
+      mkdirp(pjpath + '/jobs', function(err2) {
+        if (err2) { console.log('error making dir', err2) }
+          callback(name);
+      });
+    });
+  });
 };
 
-BrendaProjects.prototype.write = function() {
-  var pjObj = JSON.stringify(this.projects, null, 2);
-  fs.writeFile(this.projectFile, pjObj, 'utf-8', function() {});
+BrendaProjects.prototype.write = function(callback) {
+  var projectsJson = JSON.stringify(this.projects, null, 2);
+  fs.writeFile(this.projectFile, projectsJson, 'utf-8', callback());
 };
 
 return new BrendaProjects();

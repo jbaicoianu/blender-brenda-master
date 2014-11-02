@@ -1,4 +1,4 @@
-<div ng-controller='render' ng-init="tab = 'jobfile'">
+<div ng-controller='render' ng-init="tab = 'projectselect'">
     <style>
         .renderopts {
             float: left;
@@ -48,9 +48,21 @@
         </pre>
     </div>
     <div class="sidemenu renderopts">
+        <div class="cb" ng-click="tab = 'projectselect'">Projects</div>
         <div class="cb" ng-click="tab = 'jobfile'">Jobfile</div>
         <div class="cb" ng-click="tab = 'jobqueue'">Jobs</div>
         <div class="cb" ng-click="tab = 'instances'">Instances</div>
+    </div>
+    <div class="renderopts" id="projectselect" ng-show="tab == 'projectselect'">
+        <form novalidate class="simpleform projectform">
+        {{ selectedProject }}
+            <select class="input-sm" ng-model="selectedProject" ng-options="k for (k, v) in projects"></select>
+            <button type="submit" class="btn btn-primary btn-lg" ng-click="tab = 'jobqueue'">Open</button>
+        </form>
+        <form novalidate class="simpleform projectcreate">
+            <input type="text" name="pjname" ng-model="newProject" />
+            <button type="submit" class="btn btn-primary btn-lg" ng-click="addProject(newProject)">Add project</button>
+        </form>
     </div>
     <!-- Upload Form -->
     <div class="renderopts" id="uploadform" ng-show="tab == 'jobfile'">
@@ -70,6 +82,7 @@
     <div class="renderopts" id="jobqueue" ng-show="tab == 'jobqueue'">
         <div class="renderopts">
             <h3>Queue Jobs</h3>
+            <pre>Selected Project: {{ selectedProject }}</pre>
             <select class="input-sm" ng-model="jobstate" ng-options="s.value for s in jobtypes">
             </select>
                 <form novalidate class="simple-form" ng-hide="jobstate.value!='animation'" class="jobform">
@@ -77,7 +90,7 @@
                     <input type="number" min="1" ng-model="animationArgs.numframes" id="numframes" class='rangeinput' />
                     <br>
                     <button type="submit" class="btn btn-primary btn-lg" ng-click="submitAnimJob()">
-                        Populate Jobs
+                        Add Job
                     </button>
                     <pre>{{ animationArgs }}</pre>
                 </form>

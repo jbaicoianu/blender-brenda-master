@@ -1,6 +1,14 @@
 {
-  "321": {
-    "url": "http://qwerqwer",
+  "test": {
+    "name": "test",
     "dir": 0
+  },
+  "abcdef": {
+    "name": "abcdef",
+    "dir": 1
+  },
+  "qwerq": {
+    "name": "qwerq",
+    "dir": 2
   }
 }
