@@ -1,7 +1,11 @@
 // server.js
 // config
+<<<<<<< HEAD
 global.dirname = __dirname;
 global.config = require('./config/serverconfig');
+=======
+var config = require('./config/serverconfig');
+>>>>>>> 215cef5c9658cc1f07266b3d222406f3d0c5c35b
 // requires
 var express         = require('express'),
     passport        = require('passport'),
