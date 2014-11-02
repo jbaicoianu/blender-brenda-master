@@ -14,13 +14,14 @@ var config = {
     session_secret: 'CHANGE_THIS',
     session_key:    'CHANGE_THIS_TOO',
     // brenda commands - uncomment to use test script for args
-    // brenda_work: __dirname + '/utils/test.sh',
-    // brenda_run: __dirname + '/utils/test.sh',
+    // brenda_work: global.dirname + '/utils/test.sh',
+    // brenda_run: global.dirname + '/utils/test.sh',
     brenda_work:    'brenda-work',
     brenda_run:     'brenda-run',
-    template_dir:   __dirname + '/templates/brenda/',
-    jobdata_dir:    __dirname + '/jobdata/',
-    build_jobfile:  __dirname + '/scripts/brenda/build-jobfile.sh',
+    template_dir:   global.dirname + '../templates/brenda/',
+    jobdata_dir:    global.dirname + '../jobdata/',
+    build_jobfile:  global.dirname + '../scripts/brenda/build-jobfile.sh',
+    projects_dir:   '/tmp/projects',
 
 };
 

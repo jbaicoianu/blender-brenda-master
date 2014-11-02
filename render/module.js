@@ -134,6 +134,7 @@ define([
     $scope.connected = false;
     $scope.stdout = [];
     $scope.exitstate = [];
+    $scope.selectedProject = false;
     socket.on('connected', function(data) {
       $scope.$evalAsync(function() {
         $scope.client_id = data;
@@ -154,6 +155,13 @@ define([
     });
     socket.on('priceupdate', function(data) {
       $scope.current_price = 'Current prices: '+ data;
+    });
+    socket.on('projectupdate', function(data) {
+      $scope.projects = data;
+    });
+    socket.on('projectadded', function(data) {
+      $scope.selectedProject = data;
+      $scope.tab = 'jobqueue';
     })
     // job queue args
     $scope.jobtypes = [{
@@ -207,6 +215,7 @@ define([
       'i2.8xlarge',
       'hs1.8xlarge',
     ];
+    $scope.newProject = false;
     var InstanceCount = function(value) {
       var num = value;
       this.__defineGetter__("num", function() {
@@ -266,6 +275,11 @@ define([
       $scope.current_price = "Checking..."
       if ($scope.client_id) {
         socket.emit('checkprice', $scope.instanceArgs.instancetype)
+      }
+    };
+    $scope.addProject = function(newProject) {
+      if ($scope.client_id) {
+        socket.emit('addProject', newProject);
       }
     };
     // panel init
