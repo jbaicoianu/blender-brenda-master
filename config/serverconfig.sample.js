@@ -16,11 +16,9 @@ var config = {
     // brenda commands - uncomment to use test script for args
     // brenda_work: global.dirname + '/utils/test.sh',
     // brenda_run: global.dirname + '/utils/test.sh',
+    spawn_jobs:     global.dirname + '/scripts/brenda/job-spawn.sh',
     brenda_work:    'brenda-work',
     brenda_run:     'brenda-run',
-    template_dir:   global.dirname + '../templates/brenda/',
-    jobdata_dir:    global.dirname + '../jobdata/',
-    build_jobfile:  global.dirname + '../scripts/brenda/build-jobfile.sh',
     projects_dir:   '/tmp/projects',
 
 };

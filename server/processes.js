@@ -1,26 +1,29 @@
 module.exports = function(spawn, io) {
+var mkdirp = require('mkdirp');
 
 var Processes = function() {
   this.children = [];
 };
 Processes.prototype.submitJob = function(client, jobargs) {
   var args = [];
-  if (jobargs.jobtype == 'animation') {
-    args = ['-T', global.config.template_dir + 'animation', '-e', jobargs.numframes, '-d', 'push'];
-  }
-  else if (jobargs.jobtype == 'subframe') {
-    args = ['-T', global.config.template_dir + 'subframe', '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY, '-d', 'push'];
-  }
-  else if (jobargs.jobtype == 'bake') {
-    args = ['-T', global.config.template_dir + 'bake', '-e', jobargs.numobjects, '-d', 'push'];
-  }
-  var child = spawn(global.config.brenda_work, args); // change to brenda-work
-  this.children.push(child);
-  child.stdout.on('data', function(data) {
-    // emit stdout to the client who started this request
-    console.log('stdout: ' + data);
-    client.emit('stdout', data.toString());
-  });
+  this.makeJobDir(jobargs.project.dir, jobargs.jobname, function() {
+    if (jobargs.jobtype == 'animation') {
+      args = [jobargs.project.dir, jobargs.jobname, 'animation', '-e', jobargs.numframes];
+    }
+    else if (jobargs.jobtype == 'subframe') {
+      args = [jobargs.project.dir, jobargs.jobname, 'subframe', '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY];
+    }
+    else if (jobargs.jobtype == 'bake') {
+      args = [jobargs.project.dir, jobargs.jobname, 'bake', '-e', jobargs.numobjects];
+    }
+    var child = spawn(global.config.brenda_work, args); // change to brenda-work
+    this.children.push(child);
+    child.stdout.on('data', function(data) {
+      // emit stdout to the client who started this request
+      console.log('stdout: ' + data);
+      client.emit('stdout', data.toString());
+    });
+  }.bind(this));
 };
 
 Processes.prototype.spawnInstance = function(client, instargs) {
@@ -63,6 +66,13 @@ Processes.prototype.checkInstancePrice = function(client, instancetype) {
     else {
       client.emit('priceupdate', 'No price info');
     }
+  });
+};
+
+Processes.prototype.makeJobDir = function(projectDir, jobname, callback) {
+  mkdirp(global.config.projects_dir + '/' + projectDir + '/' + jobname + '/' + 'scratch', function(err) {
+    if (err) { console.log(err) };
+    callback();
   });
 };
 

@@ -10,15 +10,20 @@ var BrendaProjects = function() {
   }.bind(this));
 };
 
+BrendaProjects.prototype.sanitizeString = function(str) {
+  str = str.replace(/[^a-z0-9 \._-]/gim,"");
+  return str.trim();
+};
+
 BrendaProjects.prototype.addProject = function(name, callback) {
   if (this.projects.hasOwnProperty(name)) {
-    throw new Error('Project already exists - choose a different name'); 
+    // prevent dupes
   }
   var projectId = Object.keys(this.projects).length; 
   var newProject = {};
   newProject[name] = {
       'name': name,
-      'dir': projectId // for now
+      'dir': this.sanitizeString(name) // for now
   };
   for (var key in newProject) {
     if (newProject.hasOwnProperty(key)) {
@@ -26,12 +31,12 @@ BrendaProjects.prototype.addProject = function(name, callback) {
     }
   }
   this.write(function() {
-    var pjpath = global.config.projects_dir + '/' + name;
+    var pjpath = global.config.projects_dir + '/' + newProject[name].dir;
     mkdirp(pjpath + '/data', function(err) {
       if (err) { console.log('error making dir', err); }
       mkdirp(pjpath + '/jobs', function(err2) {
         if (err2) { console.log('error making dir', err2) }
-          callback(name);
+          callback(newProject[name]);
       });
     });
   });

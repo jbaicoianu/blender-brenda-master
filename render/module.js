@@ -177,10 +177,12 @@ define([
     $scope.jobstate = $scope.jobtypes[0];
     $scope.animationArgs = {
       jobtype: 'animation',
+      start: 1,
       numframes: 1,
     };
     $scope.subframeArgs = {
       jobtype: 'subframe',
+      start: 1,
       numframes: 1,
       tilesX: 1,
       tilesY: 1
@@ -232,7 +234,7 @@ define([
       instanceprice: 0.001
     };
     $scope.percent = 0;
-
+    $scope.jobname = 'jobname';
     $scope.uploadFile = function(files) {
       var uploadUrl = '/api/upload' + $scope.client_id;
       var fd = new FormData;
@@ -253,16 +255,22 @@ define([
     };
     $scope.submitAnimJob = function() {
       if ($scope.client_id) {
+        $scope.animationArgs['jobname'] = $scope.jobname;
+        $scope.animationArgs['project'] = $scope.selectedProject;
         socket.emit('submitjob', $scope.animationArgs);
       }
     };
     $scope.submitSubframeJob = function() {
       if ($scope.client_id) {
+        $scope.subframeArgs['jobname'] = $scope.jobname;
+        $scope.subframeArgs['project'] = $scope.selectedProject;
         socket.emit('submitjob', $scope.subframeArgs);
       }
     };
     $scope.submitBakeJob = function() {
       if ($scope.client_id) {
+        $scope.animationArgs['jobname'] = $scope.jobname;
+        $scope.bakeArgs['project'] = $scope.selectedProject;
         socket.emit('submitjob', $scope.bakeArgs);
       }
     };

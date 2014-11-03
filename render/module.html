@@ -49,7 +49,7 @@
     </div>
     <div class="sidemenu renderopts">
         <div class="cb" ng-click="tab = 'projectselect'">Projects</div>
-        <div class="cb" ng-click="tab = 'jobfile'">Jobfile</div>
+        <!--<div class="cb" ng-click="tab = 'jobfile'">Jobfile</div>-->
         <div class="cb" ng-click="tab = 'jobqueue'">Jobs</div>
         <div class="cb" ng-click="tab = 'instances'">Instances</div>
     </div>
@@ -84,10 +84,11 @@
             <h3>Queue Jobs</h3>
             <pre>Selected Project: {{ selectedProject }}</pre>
             <select class="input-sm" ng-model="jobstate" ng-options="s.value for s in jobtypes">
+            jobname: <input type="text" ng-model="jobname"
             </select>
                 <form novalidate class="simple-form" ng-hide="jobstate.value!='animation'" class="jobform">
-                    numframes:
-                    <input type="number" min="1" ng-model="animationArgs.numframes" id="numframes" class='rangeinput' />
+                    start:<input type="number" min="1" ng-model="animationArgs.start" id="start" class='rangeinput' />
+                    end:<input type="number" min="1" ng-model="animationArgs.numframes" id="numframes" class='rangeinput' />
                     <br>
                     <button type="submit" class="btn btn-primary btn-lg" ng-click="submitAnimJob()">
                         Add Job
@@ -95,8 +96,8 @@
                     <pre>{{ animationArgs }}</pre>
                 </form>
                 <form novalidate class="simple-form" ng-hide="jobstate.value!='subframe'" class="jobform">
-                    numframes:
-                    <input type="number" min="1" ng-model="subframeArgs.numframes" id="numframes" class='rangeinput' />tilesX:
+                    start: <input type="number" min="1" ng-model="subframeArgs.start" id="numframes" class='rangeinput' />
+                    end: <input type="number" min="1" ng-model="subframeArgs.numframes" id="numframes" class='rangeinput' />tilesX:
                     <input type="number" min="1" ng-model="subframeArgs.tilesX" id="tilesx" class='rangeinput' />tilesY:
                     <input type="number" min="1" ng-model="subframeArgs.tilesY" id="tilesy" class='rangeinput' />
                     <br>
