@@ -8,10 +8,10 @@ Processes.prototype.submitJob = function(client, jobargs) {
   var args = [];
   this.makeJobDir(jobargs.project.dir, jobargs.jobname, function() {
     if (jobargs.jobtype == 'animation') {
-      args = [jobargs.project.dir, jobargs.jobname, 'animation', '-e', jobargs.numframes];
+      args = [jobargs.project.dir, jobargs.jobname, 'animation', '-s', jobargs.start, '-e', jobargs.numframes];
     }
     else if (jobargs.jobtype == 'subframe') {
-      args = [jobargs.project.dir, jobargs.jobname, 'subframe', '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY];
+      args = [jobargs.project.dir, jobargs.jobname, 'subframe', '-s', jobargs.start, '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY];
     }
     else if (jobargs.jobtype == 'bake') {
       args = [jobargs.project.dir, jobargs.jobname, 'bake', '-e', jobargs.numobjects];
