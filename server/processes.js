@@ -70,7 +70,7 @@ Processes.prototype.checkInstancePrice = function(client, instancetype) {
 };
 
 Processes.prototype.makeJobDir = function(projectDir, jobname, callback) {
-  mkdirp(global.config.projects_dir + '/' + projectDir + '/' + jobname + '/' + 'scratch', function(err) {
+  mkdirp(global.config.projects_dir + '/' + projectDir + '/' + jobname + '/jobs/' + 'scratch', function(err) {
     if (err) { console.log(err) };
     callback();
   });
