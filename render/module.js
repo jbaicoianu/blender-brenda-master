@@ -193,9 +193,7 @@ define([
     };
     // instance args
     $scope.instancetypes = [
-      't2.micro',
-      't2.small',
-      't2.medium',
+      't1.micro',
       'm3.medium',
       'm3.large',
       'm3.xlarge',
@@ -211,11 +209,6 @@ define([
       'r3.4xlarge',
       'r3.8xlarge',
       'g2.2xlarge',
-      'i2.xlarge',
-      'i2.2xlarge',
-      'i2.4xlarge',
-      'i2.8xlarge',
-      'hs1.8xlarge',
     ];
     $scope.newProject = false;
     var InstanceCount = function(value) {

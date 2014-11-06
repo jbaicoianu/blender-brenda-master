@@ -20,11 +20,7 @@ var express         = require('express'),
 
 // file handler
 app.use(busboy());
-// setTimeout(function() {
-//   BrendaProjects.addProject('as3df', function(name) {
-//     console.log(BrendaProjects.projects);
-//   });
-// }, 5000);
+
 // set up authentication and then static files
 
 var sessionStore = new SQLiteStore({'dir': __dirname + '/server'});
