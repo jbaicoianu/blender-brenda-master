@@ -262,7 +262,7 @@ define([
     };
     $scope.submitBakeJob = function() {
       if ($scope.client_id) {
-        $scope.animationArgs['jobname'] = $scope.jobname;
+        $scope.bakeArgs['jobname'] = $scope.jobname;
         $scope.bakeArgs['project'] = $scope.selectedProject;
         socket.emit('submitjob', $scope.bakeArgs);
       }
