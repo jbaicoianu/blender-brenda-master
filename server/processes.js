@@ -71,7 +71,7 @@ Processes.prototype.checkInstancePrice = function(client, instancetype) {
 
 Processes.prototype.makeJobDir = function(projectDir, jobname, callback) {
   mkdirp(global.config.projects_dir + '/' + projectDir + '/jobs/' + jobname + '/' + 'scratch', function(err) {
-    if (err) { console.log(err) };
+    if (err) { console.log(err) }
     callback();
   });
 };
