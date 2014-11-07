@@ -15,11 +15,10 @@ PROCESSEDDIR=$JOBDIR/scratch/processed
 [ ! -d "$PROCESSINGDIR" ] && mkdir -p "$PROCESSINGDIR"
 [ ! -d "$PROCESSEDDIR" ] && mkdir -p "$PROCESSEDDIR"
 
-DEBUGFILE=$JOBDIR/scratch/log
 DEBUGNAME=combine-subframe
-debug_log() {
-  echo "[$DEBUGNAME]\t$@" >>$DEBUGFILE
-}
+DEBUGFILE=$JOBDIR/scratch/log
+. ./scripts/brenda/job-debug.sh
+
 
 subframe_get_filename() {
   # Given a subframe filename, extract the frame name (eg. frame_000470_X-0.5-0.75-Y-0.25-0.5.png => frame_000470.png)
@@ -36,14 +35,14 @@ subframe_combine() {
     subframe_create "$OUTFILE"
   fi
   debug_log "Combining $INFILE with $OUTFILE"
-  if composite "$INFILE" "$OUTFILE" "$OUTFILE"; then
+  if composite "$OUTFILE" "$INFILE" "$OUTFILE"; then
     mv "$INFILE" "$DONEFILE"
   fi
 }
 subframe_create() {
   OUTFILE=$1
   debug_log "Creating new output file '$OUTFILE'"
-  convert -size 1920x1080 xc:white "$OUTFILE"
+  convert -size 1x1 xc:white "$OUTFILE"
   #echo .
 }
 subframe_get_incoming_file() {

@@ -4,17 +4,16 @@ PROJECTROOT=/mnt/projects
 PROJECTNAME=$1
 JOBNAME=$2
 
+SYNCTIME=10
 JOBDIR=$PROJECTROOT/$PROJECTNAME/jobs/$JOBNAME
 PARTIALDIR=$JOBDIR/scratch/partial
 INCOMINGDIR=$JOBDIR/scratch/incoming
 [ ! -d "$INCOMINGDIR" ] && mkdir -p "$INCOMINGDIR"
 [ ! -d "$PARTIALDIR" ] && mkdir -p "$PARTIALDIR"
 
-DEBUGFILE=$JOBDIR/scratch/log
 DEBUGNAME=output-sync
-debug_log() {
-  echo "[$DEBUGNAME]\t$@" >>$DEBUGFILE
-}
+DEBUGFILE=$JOBDIR/scratch/log
+. ./scripts/brenda/job-debug.sh
 
 SYNCFILE=$PARTIALDIR/LASTSYNC
 touch "$SYNCFILE"
@@ -25,9 +24,11 @@ while true; do
   s3cmd sync s3://elation-render-output/$PROJECTNAME/$JOBNAME/ "$PARTIALDIR/" >/dev/null
 
   # Symlink all newly-downloaded files into the incoming directory, and update sync file timestamp
-  find "$PARTIALDIR" -type f -cnewer "$SYNCFILE" -exec ln -sf {} "$INCOMINGDIR/" \;
   COUNT=$(find "$PARTIALDIR" -type f -cnewer "$SYNCFILE" |wc -l)
-  debug_log "Synced $COUNT files"
+  if [ $COUNT -gt 0 ]; then
+    find "$PARTIALDIR" -type f -cnewer "$SYNCFILE" -exec ln -sf {} "$INCOMINGDIR/" \;
+    debug_log "Synced $COUNT files"
+  fi
   touch "$SYNCFILE"
 
   # Check for doneness
@@ -37,5 +38,5 @@ while true; do
   fi
 
   # Sleepy time
-  sleep 5
+  sleep $SYNCTIME
 done
