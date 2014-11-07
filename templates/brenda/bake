@@ -108,6 +108,6 @@ def bake_object(objnum):
 
 bake_object($START)
 EOF
-blender -b *.blend -P bake.py -F PNG -t 0 -- $OUTDIR
+blender -b $BLENDER_FILE -P bake.py -F PNG -t 0 -- $OUTDIR
 
 

@@ -27,7 +27,12 @@ Processes.prototype.submitJob = function(client, jobargs) {
 };
 
 Processes.prototype.spawnInstance = function(client, instargs) {
-  var args = ['-N', instargs.instancecount.num, '-i', instargs.instancetype, '-p', instargs.instanceprice, 'spot'];
+  var args = ['-N', instargs.instancecount.num, '-i', instargs.instancetype, '-p', instargs.instanceprice];
+  if (instargs.availabilityzone && instargs.availabilityzone.length > 0) {
+    args = args.concat(['-z', instargs.availabilityzone]);
+  }
+  args.push('spot');
+
   var child = spawn(global.config.brenda_run, args);
   this.children.push(child);
   child.stdout.on('data', function(data) {

@@ -1,8 +1,16 @@
 #!/bin/sh
 
 PROJECTNAME=$1
+JOBNAME=$2
+
 PROJECTROOT=/mnt/projects
 S3BUCKETNAME=elation-render-data
+
+JOBDIR=$PROJECTROOT/$PROJECTNAME/jobs/$JOBNAME
+
+DEBUGNAME=data-build
+DEBUGFILE=$JOBDIR/scratch/log
+. ./scripts/brenda/job-debug.sh
 
 if [ ! -z $PROJECTNAME ]; then
 	if [ -d "$PROJECTROOT/$PROJECTNAME" ]; then
@@ -16,26 +24,27 @@ if [ ! -z $PROJECTNAME ]; then
 			fi
 
 			if [ ! -z "$NEWER" ]; then
-				echo -n "Building $ZIPFILE..."
+				debug_log "Building $ZIPFILE..."
 				cd "$PROJECTROOT/$PROJECTNAME/data"
 				tar czf "../$ZIPFILE" .
-				echo "done"
+				debug_log "done"
 				cd ../../..
 			else
-				echo "$ZIPFILE already up to date, skipping..."
+				debug_log "$ZIPFILE already up to date, skipping..."
 			fi
-			echo -n "Uploading $ZIPFILE to s3..."
+      # FIXME - the log is misleading here, it should tell us if the upload wasn't necessary because the file was already in sync
+			debug_log "Uploading $ZIPFILE to s3..."
 			s3cmd sync "$PROJECTROOT/$PROJECTNAME/$ZIPFILE" s3://$S3BUCKETNAME/$ZIPFILE
-			echo "done"
+			debug_log "done"
 		else
-			echo "ERROR: $PROJECTNAME exists, but has no data in $PROJECTROOT/$PROJECTNAME/data"
+			debug_log "ERROR: $PROJECTNAME exists, but has no data in $PROJECTROOT/$PROJECTNAME/data"
 			exit 1
 		fi
 	else
-		echo "ERROR: missing $PROJECTROOT/$PROJECTNAME"
+		debug_log "ERROR: missing $PROJECTROOT/$PROJECTNAME"
 		exit 1
 	fi
 else
-	echo "ERROR: must specify a job name"
+	debug_log "ERROR: must specify a job name"
 	exit 1
 fi

@@ -8,7 +8,7 @@ JOBTYPE=$3 # subframe|animation|bake
 JOBARGS=${@:4}
 
 # Push the new job file to S3 (TODO - could be done with btsync)
-./scripts/brenda/job-data-build.sh $PROJECTNAME
+./scripts/brenda/job-data-build.sh "$PROJECTNAME" "$JOBNAME"
 
 # Create job directory and its subdirectories if they doesn't exist
 JOBDIR=$PROJECTROOT/$PROJECTNAME/jobs/$JOBNAME
