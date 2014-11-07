@@ -16,11 +16,13 @@ var express         = require('express'),
     app             = express(),                       
     server          = app.listen(global.config.port),
     io              = require('socket.io').listen(server),
-    procs           = require('./server/processes')(spawn, io);
+    procs           = require('./server/processes')(spawn, io),
+    serveIndex      = require('serve-index');
+    serveStatic     = require('serve-static');
+
 
 // file handler
 app.use(busboy());
-
 // set up authentication and then static files
 
 var sessionStore = new SQLiteStore({'dir': __dirname + '/server'});
@@ -34,6 +36,9 @@ var session = express_session({
   });
 require('./server/auth')(app, global.config, passport, basicStrategy, cParser, session);
 app.use(express.static(__dirname + '/grafana/dist')); 
+
+app.use('/projects', serveIndex(global.config.projects_dir, {'icons': true}))
+app.use('/projects', serveStatic(global.config.projects_dir))
 
 // make sure children die
 
