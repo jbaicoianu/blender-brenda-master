@@ -17,7 +17,7 @@ Processes.prototype.buildConfig = function(opts, callback) {
     'BLENDER_CYCLES_SAMPLES=' + opts.renderOpts.samples,
     'BLENDER_CYCLES_DEVICE=' + opts.renderOpts.device
     ].join('\n');
-  var path = global.config.projects_dir + '/' + opts.project.dir + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf'
+  var path = global.config.projects_dir + '/' + opts.project.dir + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf';
   fs.writeFile(path, configLines, function(err) {
     if (err) { console.log(err) } 
     callback();
