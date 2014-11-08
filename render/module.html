@@ -168,7 +168,7 @@
             <form class="simple-form">
               <ul>
                 <li>Check Pricing:
-                    <select class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-disabled="!connected" ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class=""><span class="icon-refresh"></span></button></li>
+                    <select class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class="btn btn-mini"><span ng-class="{'icon-refresh': !checking_price, 'icon-circle-arrow-down': checking_price}"></span></button></li>
                     <div ng-repeat="(zone, price) in instancePrices[instanceArgs.instancetype]">
                         <label><input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}"> {{zone}}: {{price}}</label>
                     </div>
