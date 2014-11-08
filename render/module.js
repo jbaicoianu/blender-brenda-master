@@ -214,6 +214,14 @@ define([
       'r3.8xlarge',
       'g2.2xlarge',
     ];
+    $scope.renderOpts = {
+      blenderFile: '',
+      renderResolutionX: 1280,
+      renderResolutionY: 720,
+      renderPercentage: 100,
+      samples: 1500,
+      device: 'GPU'
+    }
     $scope.newProject = false;
     var InstanceCount = function(value) {
       var num = value;
@@ -255,6 +263,7 @@ define([
       if ($scope.client_id) {
         $scope.animationArgs['jobname'] = $scope.jobname;
         $scope.animationArgs['project'] = $scope.selectedProject;
+        $scope.animationArgs['renderOpts'] = $scope.renderOpts;
         socket.emit('submitjob', $scope.animationArgs);
       }
     };
@@ -262,6 +271,7 @@ define([
       if ($scope.client_id) {
         $scope.subframeArgs['jobname'] = $scope.jobname;
         $scope.subframeArgs['project'] = $scope.selectedProject;
+        $scope.subframeArgs['renderOpts'] = $scope.renderOpts;
         socket.emit('submitjob', $scope.subframeArgs);
       }
     };
@@ -269,6 +279,7 @@ define([
       if ($scope.client_id) {
         $scope.bakeArgs['jobname'] = $scope.jobname;
         $scope.bakeArgs['project'] = $scope.selectedProject;
+        $scope.bakeArgs['renderOpts'] = $scope.renderOpts;
         socket.emit('submitjob', $scope.bakeArgs);
       }
     };
