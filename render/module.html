@@ -23,14 +23,35 @@
             background-color: #4a4a4a;
             color: #FFF;
         }
-        #stdout,
-        #exitstate {
-            width: 400px;
-            height: 150px;
-            overflow: auto;
+        #debug {
+          position: absolute;
+          top: 3em;
+          right: 1em;
+          bottom: 1em;
+          max-width: 400px;
+          width: 100%;
+          font-size: .9em;
+          border: 1px solid #333;
+          overflow: scroll;
         }
-        #jobqueue #stdout {
-            display:inline-block;   
+        #stdout {
+        }
+        #stdout li {
+          border-bottom: 1px solid #333;
+          font-family: monospace;
+          white-space: pre;
+        }
+        #spawninstances {
+          margin-right: 200px;
+          padding: 0 1em;
+        }
+        #spawninstances>.renderopts>h3 {
+          margin-top: 0;
+        }
+        #spawninstances ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
         }
         .jobform {
             display: inline-block !important;
@@ -163,13 +184,15 @@
               </ul>
             </form>
         </div>
-        <div class="renderopts" id="stdout">
+        <div id="debug">
             <pre> {{ instanceArgs }} </pre>
             stdout:
-            <span ng-repeat="line in stdout track by $index">
-                {{ line }}
-                <span ng-show="! $last"><br></span>
-            </span>
+            <ul id="stdout">
+                <li ng-repeat="line in stdout track by $index">
+                    {{ line }}
+                    <span ng-show="! $last"><br></span>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

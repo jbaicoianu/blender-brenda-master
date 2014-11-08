@@ -150,6 +150,8 @@ define([
     });
     socket.on('stdout', function(data) {
       $scope.stdout = $scope.stdout.concat(data);
+      var el = document.getElementById('stdout');
+      el.scrollTop = el.scrollHeight;
     });
     socket.on('exit', function(data) {
       $scope.exitstate = $scope.exitstate.concat(data);
