@@ -121,9 +121,36 @@
           color: green;
         }
         .topmenu {
-          position: absolute;
-          top: 0;
-          left: 50%;
+          display: block;
+        }
+
+        @media screen and (max-width: 800px) {
+          #debug {
+            display: none;
+          }
+          #spawninstances {
+            margin: 0;
+            padding: 0;
+          }
+          .main-view-container {
+            padding-right: 0;
+          }
+          .panel-content {
+            padding-right: 0;
+          }
+          .navbar .nav>li>a {
+            padding: .2em;
+          }
+          .navbar .brand {
+            font-size: 1em;
+            padding: 0;
+          }
+          .logo-icon {
+            padding: .2em;
+          }
+          .page-title {
+            padding: .2em;
+          }
         }
 
     </style>
