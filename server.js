@@ -17,7 +17,7 @@ var express         = require('express'),
     server          = app.listen(global.config.port),
     io              = require('socket.io').listen(server),
     procs           = require('./server/processes')(spawn, io),
-    serveIndex      = require('serve-index');
+    serveIndex      = require('serve-index'),
     serveStatic     = require('serve-static');
 
 

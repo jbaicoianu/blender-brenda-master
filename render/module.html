@@ -39,6 +39,9 @@
         .socketconnection {
             float:right;
         }
+        select.instance_type {
+          width: auto;
+        }
 
     </style>
     <!-- Side Menu -->
@@ -84,8 +87,8 @@
             <h3>Queue Jobs</h3>
             <pre>Selected Project: {{ selectedProject }}</pre>
             <select class="input-sm" ng-model="jobstate" ng-options="s.value for s in jobtypes">
-            jobname: <input type="text" ng-model="jobname"
             </select>
+            jobname: <input type="text" ng-model="jobname">
                 <form novalidate class="simple-form" ng-hide="jobstate.value!='animation'" class="jobform">
                     start:<input type="number" min="1" ng-model="animationArgs.start" id="start" class='rangeinput' />
                     end:<input type="number" min="1" ng-model="animationArgs.numframes" id="numframes" class='rangeinput' />
@@ -96,10 +99,11 @@
                     <pre>{{ animationArgs }}</pre>
                 </form>
                 <form novalidate class="simple-form" ng-hide="jobstate.value!='subframe'" class="jobform">
-                    start: <input type="number" min="1" ng-model="subframeArgs.start" id="numframes" class='rangeinput' />
-                    end: <input type="number" min="1" ng-model="subframeArgs.numframes" id="numframes" class='rangeinput' />tilesX:
-                    <input type="number" min="1" ng-model="subframeArgs.tilesX" id="tilesx" class='rangeinput' />tilesY:
-                    <input type="number" min="1" ng-model="subframeArgs.tilesY" id="tilesy" class='rangeinput' />
+                    start: <input type="number" min="0" ng-model="subframeArgs.start" id="numframes" class='rangeinput' />
+                    end: <input type="number" min="0" ng-model="subframeArgs.numframes" id="numframes" class='rangeinput' />
+                    frameskip: <input type="number" min="1" ng-model="subframeArgs.frameskip" id="frameskip" class='rangeinput' />
+                    tilesX: <input type="number" min="1" ng-model="subframeArgs.tilesX" id="tilesx" class='rangeinput' />
+                    tilesY: <input type="number" min="1" ng-model="subframeArgs.tilesY" id="tilesy" class='rangeinput' />
                     <br>
                     <button type="submit" class="btn btn-primary btn-lg" ng-click="submitSubframeJob()">
                         Populate Jobs
@@ -130,10 +134,17 @@
             <h3>Spawn Instances</h3>
             <form class="simple-form">
               <ul>
-                <li>instancecount: <input type="range" min="1" max="50" ng-model="instanceArgs.instancecount.num" /> <input type="number" min="1" ng-model="instanceArgs.instancecount.num" size="3" id="instancecount" class='rangeinput' /></li>
-                <li>availability zone: <input type="text" name="availabilityzone" ng-model="instanceArgs.availabilityzone" /></li>
-                <li>instancetype: <select class="input-sm" ng-change="getInstancePrice(instanceArgs.instancetype)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></li>
-                <li>instanceprice: <pre>{{ current_price }}</pre> <input type="number" min="0.001" step="0.001" ng-model="instanceArgs.instanceprice" size="3" id="instanceprice" class='rangeinput' /></li>
+                <li>Check Pricing:
+                    <select class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" class="btn">refresh</button></li>
+                    <div ng-repeat="(zone, price) in instancePrices[instanceArgs.instancetype]">
+                        <label><input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}"> {{zone}}: {{price}}</label>
+                    </div>
+                </li>
+              
+                <li>
+                    Spawn <input type="number" min="1" ng-model="instanceArgs.instancecount.num" size="3" id="instancecount" class='rangeinput' /> instances at $<input type="number" min="0.001" step="0.001" ng-model="instanceArgs.instanceprice" size="3" id="instanceprice" class='rangeinput' />/hr
+                    <br><input type="range" min="1" max="50" ng-model="instanceArgs.instancecount.num" /> 
+                </li>
                 <li> <button type="submit" class="btn btn-primary btn-lg" ng-click="submitInstanceSpawn()"> Spawn Instances </button></li>
               </ul>
             </form>
