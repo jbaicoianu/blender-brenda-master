@@ -156,6 +156,7 @@ define([
     });
     socket.on('priceupdate', function(data) {
       $scope.current_price = 'Current prices: '+ JSON.stringify(data);
+      $scope.checking_price = false;
       $scope.instancePrices[$scope.instanceArgs.instancetype] = data;
     });
     socket.on('projectupdate', function(data) {
@@ -276,12 +277,41 @@ define([
         socket.emit('spawninstance', $scope.instanceArgs);
       }
     };
-    $scope.getInstancePrice = function(instancetype) {
-      $scope.current_price = "Checking..."
+    $scope.getInstancePrice = function(instancetype, reset) {
+      $scope.current_price = "Checking...";
+      $scope.checking_price = true;
+      if (reset) {
+        $scope.instancePrices[$scope.instanceArgs.instancetype] = {};
+      }
       if ($scope.client_id) {
         socket.emit('checkprice', $scope.instanceArgs.instancetype)
       }
     };
+    $scope.getEstimatedPrices = function() {
+      var instancecount = $scope.instanceArgs.instancecount.num,
+          instanceprice = $scope.instanceArgs.instanceprice,
+          instancetype = $scope.instanceArgs.instancetype,
+          availabilityzone = $scope.instanceArgs.availabilityzone;
+      var currentprice = 0, maxprice = instancecount * instanceprice;
+
+      if ($scope.instancePrices[instancetype] && $scope.instancePrices[instancetype][availabilityzone]) {
+        var iprice = $scope.instancePrices[instancetype][availabilityzone].substr(1); // strip leading $
+        currentprice = iprice * instancecount;
+      }
+      return [currentprice.toFixed(4), maxprice.toFixed(4)];
+    };
+    $scope.getEstimatedCurrentPrice = function() {
+      var prices = $scope.getEstimatedPrices();
+      return prices[0];
+    }
+    $scope.getEstimatedMaxPrice = function() {
+      var prices = $scope.getEstimatedPrices();
+      return prices[1];
+    }
+    $scope.isMaxPriceHighEnough = function() {
+      var prices = $scope.getEstimatedPrices();
+      return parseFloat(prices[0]) < parseFloat(prices[1]);
+    }
     $scope.addProject = function(newProject) {
       if ($scope.client_id) {
         socket.emit('addProject', newProject);
