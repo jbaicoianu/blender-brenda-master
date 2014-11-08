@@ -310,7 +310,7 @@ define([
     }
     $scope.isMaxPriceHighEnough = function() {
       var prices = $scope.getEstimatedPrices();
-      return parseFloat(prices[0]) < parseFloat(prices[1]);
+      return (prices[0] != '0.0000' && parseFloat(prices[0]) < parseFloat(prices[1]));
     }
     $scope.addProject = function(newProject) {
       if ($scope.client_id) {
