@@ -62,9 +62,10 @@ Processes.prototype.checkInstancePrice = function(client, instancetype) {
     var lines = data.toString().split('\n');
     if (lines.length > 2) {
       //var instType = lines[0].split(" ")[5];
-      var prices = [];
+      var prices = {};
       for (var i=1; i < 4; i++) {
-        prices.push(lines[i].split(" ")[2]);
+        var parts = lines[i].split(" ");
+        prices[parts[0]] = parts[2];
       }
       client.emit('priceupdate', prices);
     }
