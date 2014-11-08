@@ -1,28 +1,50 @@
 module.exports = function(spawn, io) {
 var mkdirp = require('mkdirp');
+var fs = require('fs');
 
 var Processes = function() {
   this.children = [];
 };
+
+Processes.prototype.buildConfig = function(opts, callback) {
+  var configLines = [
+    'BLENDER_PROJECT=s3://elation-render-data/'+ opts.project.dir + '.tar.gz',
+    'RENDER_OUTPUT=s3://elation-render-output/'+ opts.project.dir + '/' + opts.jobname + '/',
+    'BLENDER_FILE=' + opts.renderOpts.blenderFile,
+    'BLENDER_RENDER_RESOLUTION_X=' + opts.renderOpts.renderResolutionX,
+    'BLENDER_RENDER_RESOLUTION_Y=' + opts.renderOpts.renderResolutionY,
+    'BLENDER_RENDER_RESOLUTION_PERCENTAGE=' + opts.renderOpts.renderPercentage,
+    'BLENDER_CYCLES_SAMPLES=' + opts.renderOpts.samples,
+    'BLENDER_CYCLES_DEVICE=' + opts.renderOpts.device
+    ].join('\n');
+  var path = global.config.projects_dir + '/' + opts.project.dir + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf'
+  fs.writeFile(path, configLines, function(err) {
+    if (err) { console.log(err) } 
+    callback();
+  });
+};
+
 Processes.prototype.submitJob = function(client, jobargs) {
   var args = [];
   this.makeJobDir(jobargs.project.dir, jobargs.jobname, function() {
-    if (jobargs.jobtype == 'animation') {
-      args = [jobargs.project.dir, jobargs.jobname, 'animation', '-s', jobargs.start, '-e', jobargs.numframes];
-    }
-    else if (jobargs.jobtype == 'subframe') {
-      args = [jobargs.project.dir, jobargs.jobname, 'subframe', '-s', jobargs.start, '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY];
-    }
-    else if (jobargs.jobtype == 'bake') {
-      args = [jobargs.project.dir, jobargs.jobname, 'bake', '-e', jobargs.numobjects];
-    }
-    var child = spawn(global.config.spawn_jobs, args); // change to brenda-work
-    this.children.push(child);
-    child.stdout.on('data', function(data) {
-      // emit stdout to the client who started this request
-      console.log('stdout: ' + data);
-      client.emit('stdout', data.toString());
-    });
+    this.buildConfig(jobargs, function() {
+      if (jobargs.jobtype == 'animation') {
+        args = [jobargs.project.dir, jobargs.jobname, 'animation', '-s', jobargs.start, '-e', jobargs.numframes];
+      }
+      else if (jobargs.jobtype == 'subframe') {
+        args = [jobargs.project.dir, jobargs.jobname, 'subframe', '-s', jobargs.start, '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY];
+      }
+      else if (jobargs.jobtype == 'bake') {
+        args = [jobargs.project.dir, jobargs.jobname, 'bake', '-e', jobargs.numobjects];
+      }
+      var child = spawn(global.config.spawn_jobs, args); // change to brenda-work
+      this.children.push(child);
+      child.stdout.on('data', function(data) {
+        // emit stdout to the client who started this request
+        console.log('stdout: ' + data);
+        client.emit('stdout', data.toString());
+      });
+    }.bind(this));
   }.bind(this));
 };
 
