@@ -134,7 +134,8 @@ define([
     $scope.connected = false;
     $scope.stdout = [];
     $scope.exitstate = [];
-    $scope.selectedProject = false;
+    $scope.selectedProject = '';
+    $scope.jobname = 'jobname';
     socket.on('connected', function(data) {
       $scope.$evalAsync(function() {
         $scope.client_id = data;
@@ -154,7 +155,8 @@ define([
       $scope.exitstate = $scope.exitstate.concat(data);
     });
     socket.on('priceupdate', function(data) {
-      $scope.current_price = 'Current prices: '+ data;
+      $scope.current_price = 'Current prices: '+ JSON.stringify(data);
+      $scope.instancePrices[$scope.instanceArgs.instancetype] = data;
     });
     socket.on('projectupdate', function(data) {
       $scope.projects = data;
@@ -184,6 +186,7 @@ define([
       jobtype: 'subframe',
       start: 1,
       numframes: 1,
+      frameskip: 1,
       tilesX: 1,
       tilesY: 1
     };
@@ -224,10 +227,11 @@ define([
     $scope.instanceArgs = {
       instancecount: new InstanceCount(1),
       instancetype: $scope.instancetypes[0],
+      availabilityzone: 'us-west-2c',
       instanceprice: 0.001
     };
     $scope.percent = 0;
-    $scope.jobname = 'jobname';
+    $scope.instancePrices = {};
     $scope.uploadFile = function(files) {
       var uploadUrl = '/api/upload' + $scope.client_id;
       var fd = new FormData;
@@ -286,6 +290,8 @@ define([
     // panel init
     $scope.init = function() {
       panelSrv.init(this);
+      // Fetch default instance type price data on init
+      setTimeout(function() { $scope.getInstancePrice($scope.instanceArgs.instancetype); }, 1000);
     };
     $scope.openEditor = function() {};
     $scope.init();
