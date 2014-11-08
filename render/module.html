@@ -36,8 +36,18 @@
             display: inline-block !important;
             float: none !important;
         }
-        .socketconnection {
-            float:right;
+        .socket_connection {
+          position: absolute;
+          right: 1em;
+          top: 1em;
+          width: 1em;
+          height: 1em;
+          border-radius: .5em;
+          background: red;
+          border: 1px solid black;
+        }
+        .socket_connection.socket_connected {
+          background: green;
         }
         select.instance_type {
           width: auto;
@@ -51,11 +61,7 @@
 
     </style>
     <!-- Side Menu -->
-    <div class="socketconnection">
-        <pre>
-        socket connected: {{ connected }}
-        </pre>
-    </div>
+    <div class="socket_connection" ng-class="{socket_connected: connected}" ng-attr-title="Socket {{!connected ? 'dis' : ''}}connected"></div>
     <div class="sidemenu renderopts">
         <div class="cb" ng-click="tab = 'projectselect'">Projects</div>
         <!--<div class="cb" ng-click="tab = 'jobfile'">Jobfile</div>-->
