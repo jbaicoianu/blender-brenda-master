@@ -93,11 +93,11 @@
         <form novalidate class="simpleform projectform">
         {{ selectedProject }}
             <select class="input-sm" ng-model="selectedProject" ng-options="k for (k, v) in projects"></select>
-            <button type="submit" class="btn btn-primary btn-lg" ng-click="tab = 'jobqueue'">Open</button>
+            <button ng-disabled="!connected" type="submit" class="btn btn-primary btn-lg" ng-click="tab = 'jobqueue'">Open</button>
         </form>
         <form novalidate class="simpleform projectcreate">
             <input type="text" name="pjname" ng-model="newProject" />
-            <button type="submit" class="btn btn-primary btn-lg" ng-click="addProject(newProject)">Add project</button>
+            <button ng-disabled="!connected" type="submit" class="btn btn-primary btn-lg" ng-click="addProject(newProject)">Add project</button>
         </form>
     </div>
     <!-- Upload Form -->
@@ -126,7 +126,7 @@
                     start:<input type="number" min="1" ng-model="animationArgs.start" id="start" class='rangeinput' />
                     end:<input type="number" min="1" ng-model="animationArgs.numframes" id="numframes" class='rangeinput' />
                     <br>
-                    <button type="submit" class="btn btn-primary btn-lg" ng-click="submitAnimJob()">
+                    <button ng-disabled="!connected" type="submit" class="btn btn-primary btn-lg" ng-click="submitAnimJob()">
                         Add Job
                     </button>
                     <pre>{{ animationArgs }}</pre>
@@ -138,7 +138,7 @@
                     tilesX: <input type="number" min="1" ng-model="subframeArgs.tilesX" id="tilesx" class='rangeinput' />
                     tilesY: <input type="number" min="1" ng-model="subframeArgs.tilesY" id="tilesy" class='rangeinput' />
                     <br>
-                    <button type="submit" class="btn btn-primary btn-lg" ng-click="submitSubframeJob()">
+                    <button ng-disabled="!connected" type="submit" class="btn btn-primary btn-lg" ng-click="submitSubframeJob()">
                         Populate Jobs
                     </button>
                     <pre>{{ subframeArgs }}</pre>
@@ -147,7 +147,7 @@
                     numobjects:
                     <input type="number" min="1" ng-model="bakeArgs.numobjects" id="numobjects" class='rangeinput' />
                     <br>
-                    <button type="submit" class="btn btn-primary btn-lg" ng-click="submitBakeJob()">
+                    <button ng-disabled="!connected" type="submit" class="btn btn-primary btn-lg" ng-click="submitBakeJob()">
                         Populate Jobs
                     </button>
                     <pre>{{ bakeArgs }}</pre>
@@ -168,7 +168,7 @@
             <form class="simple-form">
               <ul>
                 <li>Check Pricing:
-                    <select class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class="btn">refresh</button></li>
+                    <select class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-disabled="!connected" ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class=""><span class="icon-refresh"></span></button></li>
                     <div ng-repeat="(zone, price) in instancePrices[instanceArgs.instancetype]">
                         <label><input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}"> {{zone}}: {{price}}</label>
                     </div>
