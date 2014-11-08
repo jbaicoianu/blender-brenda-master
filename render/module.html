@@ -42,6 +42,12 @@
         select.instance_type {
           width: auto;
         }
+        .price_toolow {
+          color: yellow;
+        }
+        .price_ok {
+          color: green;
+        }
 
     </style>
     <!-- Side Menu -->
@@ -135,16 +141,18 @@
             <form class="simple-form">
               <ul>
                 <li>Check Pricing:
-                    <select class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" class="btn">refresh</button></li>
+                    <select class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class="btn">refresh</button></li>
                     <div ng-repeat="(zone, price) in instancePrices[instanceArgs.instancetype]">
                         <label><input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}"> {{zone}}: {{price}}</label>
                     </div>
                 </li>
               
                 <li>
-                    Spawn <input type="number" min="1" ng-model="instanceArgs.instancecount.num" size="3" id="instancecount" class='rangeinput' /> instances at $<input type="number" min="0.001" step="0.001" ng-model="instanceArgs.instanceprice" size="3" id="instanceprice" class='rangeinput' />/hr
+                    Spawn <input type="number" min="1" ng-model="instanceArgs.instancecount.num" size="3" id="instancecount" class='rangeinput' /> instances at $<input type="number" min="0.0001" step="0.0001" ng-model="instanceArgs.instanceprice" size="3" id="instanceprice" class='rangeinput' /> per hour
                     <br><input type="range" min="1" max="50" ng-model="instanceArgs.instancecount.num" /> 
                 </li>
+                <li>Current Price: <strong class="estimated_price">${{ getEstimatedCurrentPrice() }}/hr</strong></li>
+                <li>Max Price: <strong class="estimated_price" ng-class="{price_toolow: !isMaxPriceHighEnough(), price_ok: isMaxPriceHighEnough()}">${{ getEstimatedMaxPrice() }}/hr</strong></li>
                 <li> <button type="submit" class="btn btn-primary btn-lg" ng-click="submitInstanceSpawn()"> Spawn Instances </button></li>
               </ul>
             </form>
