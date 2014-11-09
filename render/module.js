@@ -94,7 +94,7 @@ define([
       }
     ];
   });
-  var module = angular.module('grafana.panels.render', []);
+  var module = angular.module('grafana.panels.render', ['$strap.directives']);
   app.useModule(module);
   // factory to create socket
   module.factory('socket', function($rootScope) {
@@ -120,7 +120,7 @@ define([
       }
     };
   });
-  module.controller('render', function($scope, $http, socket, panelSrv) {
+  module.controller('render', function($scope, $http, $modal, $log, socket, panelSrv) {
     // panel setup
     $scope.panelMeta = {
       description: 'description lorem ipsum'
@@ -230,6 +230,7 @@ define([
       samples: 1500,
       device: 'GPU'
     }
+    $scope.devices = ['CPU', 'GPU']
     $scope.newProject = false;
     var InstanceCount = function(value) {
       var num = value;
@@ -339,6 +340,10 @@ define([
     $scope.getBlenderFiles = function() {
       $scope.checking_files = true;
       socket.emit('getBlenderFiles', $scope.selectedProject);
+    };
+    $scope.modalInstance = $modal({scope: $scope, template: 'AddProjectModal.html', show: false})
+    $scope.openAddProject = function() {
+
     };
     // panel init
     $scope.init = function() {

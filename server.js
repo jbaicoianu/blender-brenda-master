@@ -84,7 +84,9 @@ io.on('connection', function(client) {
   client.on('addProject', function(data) {
     console.log('adding new project: ', data);
     BrendaProjects.addProject(data, function(name) {
+      console.log('added project:', name);
       client.emit('projectadded', name);
+      client.emit('projectupdate', BrendaProjects.projects)
     });
   });
   client.on('getBlenderFiles', function(data) {
