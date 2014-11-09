@@ -120,7 +120,7 @@ define([
       }
     };
   });
-  module.controller('render', function($scope, $http, $modal, $log, socket, panelSrv) {
+  module.controller('render', function($scope, $http, $modal, socket, panelSrv) {
     // panel setup
     $scope.panelMeta = {
       description: 'description lorem ipsum'
@@ -340,10 +340,6 @@ define([
     $scope.getBlenderFiles = function() {
       $scope.checking_files = true;
       socket.emit('getBlenderFiles', $scope.selectedProject);
-    };
-    $scope.modalInstance = $modal({scope: $scope, template: 'AddProjectModal.html', show: false})
-    $scope.openAddProject = function() {
-
     };
     // panel init
     $scope.init = function() {
