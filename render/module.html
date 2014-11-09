@@ -220,7 +220,6 @@
                 <select class="input-sm" ng-model="selectedProject" ng-change="getBlenderFiles()" ng-options="k for (k, v) in projects"></select>
                 <button ng-disabled="!connected" type="submit" class="btn btn-mini" bs-modal="'AddProjectModal.html'"><span class="icon-asterisk"></span></button>
             </form>
-        <pre>{{renderOpts.blenderFile}}</pre>
         jobname: <input type="text" ng-model="jobname"><br>
             <select class="input-sm" ng-model="jobstate" ng-options="s.value for s in jobtypes">
             </select><br>
