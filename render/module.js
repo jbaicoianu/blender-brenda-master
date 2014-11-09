@@ -164,7 +164,15 @@ define([
     });
     socket.on('projectadded', function(data) {
       $scope.selectedProject = data;
-      $scope.tab = 'jobqueue';
+    });
+    socket.on('blenderFileUpdate', function(data) {
+      $scope.blenderFiles = []
+      for (var i = 0; i < data.length; i++) {
+        var parts = data[i].split('/data/');
+        $scope.blenderFiles.push(parts[1]);
+      }
+      $scope.renderOpts.blenderFile = $scope.blenderFiles[0];
+      $scope.checking_files = false;
     })
     // job queue args
     $scope.jobtypes = [{
@@ -327,6 +335,10 @@ define([
       if ($scope.client_id) {
         socket.emit('addProject', newProject);
       }
+    };
+    $scope.getBlenderFiles = function() {
+      $scope.checking_files = true;
+      socket.emit('getBlenderFiles', $scope.selectedProject);
     };
     // panel init
     $scope.init = function() {

@@ -1,16 +1,25 @@
 module.exports = function(spawn, io) {
 var mkdirp = require('mkdirp');
 var fs = require('fs');
+var glob = require('glob');
 
 var Processes = function() {
   this.children = [];
+};
+
+Processes.prototype.getBlenderFiles = function(project, callback) {
+  var path = global.config.projects_dir + '/' + project.dir + '/data/**/*.blend';
+  glob(path, function(err, files) {
+    if (err) { console.log(err) }
+    callback(files);
+  });
 };
 
 Processes.prototype.buildConfig = function(opts, callback) {
   var configLines = [
     'BLENDER_PROJECT=s3://elation-render-data/'+ opts.project.dir + '.tar.gz',
     'RENDER_OUTPUT=s3://elation-render-output/'+ opts.project.dir + '/' + opts.jobname + '/',
-    'BLENDER_FILE=' + opts.renderOpts.blenderFile,
+    'BLENDER_FILE=' + global.config.projects_dir + '/' + opts.project.dir + '/data/' + opts.renderOpts.blenderFile,
     'BLENDER_RENDER_RESOLUTION_X=' + opts.renderOpts.renderResolutionX,
     'BLENDER_RENDER_RESOLUTION_Y=' + opts.renderOpts.renderResolutionY,
     'BLENDER_RENDER_RESOLUTION_PERCENTAGE=' + opts.renderOpts.renderPercentage,
@@ -83,7 +92,6 @@ Processes.prototype.checkInstancePrice = function(client, instancetype) {
     console.log(data.toString());
     var lines = data.toString().split('\n');
     if (lines.length > 2) {
-      //var instType = lines[0].split(" ")[5];
       var prices = {};
       for (var i=1; i < 4; i++) {
         var parts = lines[i].split(" ");

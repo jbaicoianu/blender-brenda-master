@@ -37,8 +37,8 @@ var session = express_session({
 require('./server/auth')(app, global.config, passport, basicStrategy, cParser, session);
 app.use(express.static(__dirname + '/grafana/dist')); 
 
-app.use('/projects', serveIndex(global.config.projects_dir, {'icons': true}))
-app.use('/projects', serveStatic(global.config.projects_dir))
+app.use('/projects', serveIndex(global.config.projects_dir, {'icons': true}));
+app.use('/projects', serveStatic(global.config.projects_dir));
 
 // make sure children die
 
@@ -85,6 +85,12 @@ io.on('connection', function(client) {
     console.log('adding new project: ', data);
     BrendaProjects.addProject(data, function(name) {
       client.emit('projectadded', name);
+    });
+  });
+  client.on('getBlenderFiles', function(data) {
+    console.log('getting blender files for project', data);
+    procs.getBlenderFiles(data, function(files) {
+      client.emit('blenderFileUpdate', files);
     });
   });
 });
