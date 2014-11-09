@@ -343,7 +343,7 @@ define([
     };
     // panel init
     $scope.disableJobSubmit = function() {
-      if ($scope.jobname == '' || !$scope.selectedProject || $scope.renderOpts.blenderFile == '' || !$scope.connected) {
+      if ($scope.jobname == '' || !$scope.selectedProject || !$scope.renderOpts.blenderFile || !$scope.connected) {
         return true;  
       }
       return false;

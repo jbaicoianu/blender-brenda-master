@@ -170,6 +170,7 @@
             <button class="btn btn-warning" ng-click="hide()">Cancel</button>
         </div>
     </script>
+    <!-- Spawn Instance Confirmation Modal -->
     <script type="text/ng-template" id="SpawnInstancesModal.html">
         <div class="modal-header">
             <h3 class="modal-title">Spawn Instances?</h3>
@@ -183,6 +184,19 @@
             <button class="btn btn-warning" ng-click="hide()">Cancel</button>
         </div>
     </script>    
+    <!-- Submit Job Confirmation Modal -->
+    <script type="text/ng-template" id="SubmitJobsModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Submit Job?</h3>
+        </div>
+        <div class="modal-body">
+            {{ renderOpts }}
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="hide();">Submit</button>
+            <button class="btn btn-warning" ng-click="hide()">Cancel</button>
+        </div>
+    </script>        
     <!-- Nav Menu -->
     <div class="socket_connection" ng-class="{socket_connected: connected}" ng-attr-title="Socket {{!connected ? 'dis' : ''}}connected"></div>
     <div class="topmenu btn-group">
@@ -206,7 +220,7 @@
                 <select class="input-sm" ng-model="selectedProject" ng-change="getBlenderFiles()" ng-options="k for (k, v) in projects"></select>
                 <button ng-disabled="!connected" type="submit" class="btn btn-mini" bs-modal="'AddProjectModal.html'"><span class="icon-asterisk"></span></button>
             </form>
-
+        <pre>{{renderOpts.blenderFile}}</pre>
         jobname: <input type="text" ng-model="jobname"><br>
             <select class="input-sm" ng-model="jobstate" ng-options="s.value for s in jobtypes">
             </select><br>
