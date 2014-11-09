@@ -135,7 +135,7 @@ define([
     $scope.stdout = [];
     $scope.exitstate = [];
     $scope.selectedProject = '';
-    $scope.jobname = 'jobname';
+    $scope.jobname = '';
     socket.on('connected', function(data) {
       $scope.$evalAsync(function() {
         $scope.client_id = data;
@@ -342,6 +342,12 @@ define([
       socket.emit('getBlenderFiles', $scope.selectedProject);
     };
     // panel init
+    $scope.disableJobSubmit = function() {
+      if ($scope.jobname == '' || !$scope.selectedProject || $scope.renderOpts.blenderFile == '' || !$scope.connected) {
+        return true;  
+      }
+      return false;
+    }
     $scope.init = function() {
       panelSrv.init(this);
       // Fetch default instance type price data on init

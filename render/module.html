@@ -214,7 +214,7 @@
                     start:<input type="number" min="1" ng-model="animationArgs.start" id="start" class='rangeinput' />
                     end:<input type="number" min="1" ng-model="animationArgs.numframes" id="numframes" class='rangeinput' />
                     <br>
-                    <button ng-disabled="!connected" type="submit" class="btn btn-primary btn-lg" ng-click="submitAnimJob()">
+                    <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitAnimJob()">
                         Add Job
                     </button>
                     <!--<pre>{{ animationArgs }}</pre>-->
@@ -226,7 +226,7 @@
                     tilesX: <input type="number" min="1" ng-model="subframeArgs.tilesX" id="tilesx" class='rangeinput' />
                     tilesY: <input type="number" min="1" ng-model="subframeArgs.tilesY" id="tilesy" class='rangeinput' />
                     <br>
-                    <button ng-disabled="!connected" type="submit" class="btn btn-primary btn-lg" ng-click="submitSubframeJob()">
+                    <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitSubframeJob()">
                         Populate Jobs
                     </button>
                     <!--<pre>{{ subframeArgs }}</pre>-->
@@ -235,7 +235,7 @@
                     numobjects:
                     <input type="number" min="1" ng-model="bakeArgs.numobjects" id="numobjects" class='rangeinput' />
                     <br>
-                    <button ng-disabled="!connected" type="submit" class="btn btn-primary btn-lg" ng-click="submitBakeJob()">
+                    <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitBakeJob()">
                         Populate Jobs
                     </button>
                     <!--<pre>{{ bakeArgs }}</pre>-->
