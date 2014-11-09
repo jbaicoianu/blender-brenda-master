@@ -17,6 +17,7 @@ Processes.prototype.getBlenderFiles = function(project, callback) {
 
 Processes.prototype.buildConfig = function(opts, callback) {
   var configLines = [
+    'WORK_QUEUE=sqs://elation-render-output',
     'BLENDER_PROJECT=s3://elation-render-data/'+ opts.project.dir + '.tar.gz',
     'RENDER_OUTPUT=s3://elation-render-output/'+ opts.project.dir + '/' + opts.jobname + '/',
     'BLENDER_FILE=' + global.config.projects_dir + '/' + opts.project.dir + '/data/' + opts.renderOpts.blenderFile,
