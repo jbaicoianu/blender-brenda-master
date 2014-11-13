@@ -111,9 +111,11 @@ Processes.prototype.checkInstancePrice = function(client, instargs) {
     var lines = data.toString().split('\n');
     if (lines.length > 2) {
       var prices = {};
-      for (var i=1; i < 4; i++) {
+      for (var i=1; i < lines.length; i++) {
         var parts = lines[i].split(" ");
-        prices[parts[0]] = parts[2];
+        if (parts.length > 0) {
+          prices[parts[0]] = parts[2];
+        }
       }
       client.emit('priceupdate', prices);
     }
