@@ -15,6 +15,14 @@ Processes.prototype.getBlenderFiles = function(project, callback) {
   });
 };
 
+Processes.prototype.getRegionConfigs = function(callback) {
+  var path = global.dirname + '/config/regions/**/*.conf';
+  glob(path, function(err, files) {
+    if (err) { console.log(err) }
+    callback(files);
+  });
+};
+
 Processes.prototype.buildConfig = function(opts, callback) {
   var configLines = [
     'WORK_QUEUE=sqs://elation-render-output',
@@ -59,9 +67,13 @@ Processes.prototype.submitJob = function(client, jobargs) {
 };
 
 Processes.prototype.spawnInstance = function(client, instargs) {
-  var args = ['-N', instargs.instancecount.num, '-i', instargs.instancetype, '-p', instargs.instanceprice];
+  var args = ['-c', regionConf, '-N', instargs.instancecount.num, '-i', instargs.instancetype, '-p', instargs.instanceprice];
   if (instargs.availabilityzone && instargs.availabilityzone.length > 0) {
     args = args.concat(['-z', instargs.availabilityzone]);
+  }
+  if (instargs.region && instargs.region.length > 0) {
+    var regionConf = global.dirname + '/config/regions/' + instargs.region;
+    args = args.concat(['-c', regionConf]);
   }
   args.push('spot');
 
@@ -84,11 +96,16 @@ Processes.prototype.buildJobFile = function(client, jobname) {
   });
 };
 
-Processes.prototype.checkInstancePrice = function(client, instancetype) {
-  var args = ['-i', instancetype, 'price'];
-  console.log(args);
+Processes.prototype.checkInstancePrice = function(client, instargs) {
+  var args = ['-i', instargs.instancetype];
+  if (instargs.region && instargs.region.length > 0) {
+    var regionConf = global.dirname + '/config/regions/' + instargs.region;
+    args = args.concat(['-c', regionConf]);
+  }  
+  args.push('price');
   var child = spawn('brenda-run', args);
   this.children.push(child);
+  
   child.stdout.on('data', function(data) {
     console.log(data.toString());
     var lines = data.toString().split('\n');

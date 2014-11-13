@@ -136,6 +136,7 @@ define([
     $scope.exitstate = [];
     $scope.selectedProject = '';
     $scope.jobname = '';
+    $scope.regions = [];
     socket.on('connected', function(data) {
       $scope.$evalAsync(function() {
         $scope.client_id = data;
@@ -174,6 +175,10 @@ define([
       $scope.renderOpts.blenderFile = $scope.blenderFiles[0];
       $scope.checking_files = false;
     })
+    socket.on('regionconfigs', function(data) {
+      $scope.regions = data;
+      $scope.instanceArgs.region = $scope.regions[0];
+    });
     // job queue args
     $scope.jobtypes = [{
       value: 'animation',
@@ -245,6 +250,7 @@ define([
     $scope.instanceArgs = {
       instancecount: new InstanceCount(1),
       instancetype: $scope.instancetypes[0],
+      region: $scope.regions[0],
       availabilityzone: 'us-west-2c',
       instanceprice: 0.001
     };
@@ -304,7 +310,7 @@ define([
         $scope.instancePrices[$scope.instanceArgs.instancetype] = {};
       }
       if ($scope.client_id) {
-        socket.emit('checkprice', $scope.instanceArgs.instancetype)
+        socket.emit('checkprice', $scope.instanceArgs)
       }
     };
     $scope.getEstimatedPrices = function() {

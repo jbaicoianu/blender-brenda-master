@@ -69,6 +69,14 @@ io.on('connection', function(client) {
   client.emit('connected', client.id);        
   console.log('client', client.id, 'connected');
   client.emit('projectupdate', BrendaProjects.projects);
+  procs.getRegionConfigs(function(files) {
+    var regions = [];
+    for (var i = 0; i < files.length; i++) {
+      var parts = files[i].split('/');
+      regions.push(parts[parts.length - 1]);
+    }
+    client.emit('regionconfigs', regions);
+  });
   client.on('submitjob', function(data) {
     console.log('job submit, data: ', data);
     procs.submitJob(client, data);
@@ -78,7 +86,7 @@ io.on('connection', function(client) {
     procs.spawnInstance(client, data);
   });
   client.on('checkprice', function(data) {
-    console.log('price check', data);
+    console.log('price check', data.instancetype);
     procs.checkInstancePrice(client, data);
   });
   client.on('addProject', function(data) {
@@ -86,7 +94,7 @@ io.on('connection', function(client) {
     BrendaProjects.addProject(data, function(name) {
       console.log('added project:', name);
       client.emit('projectadded', name);
-      client.emit('projectupdate', BrendaProjects.projects)
+      client.emit('projectupdate', BrendaProjects.projects);
     });
   });
   client.on('getBlenderFiles', function(data) {

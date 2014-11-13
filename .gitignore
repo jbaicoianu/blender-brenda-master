@@ -3,3 +3,4 @@ serverconfig.js
 jobdata/*
 sessions.db
 server/projects.json
+config/regions/*.conf

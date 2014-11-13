@@ -271,7 +271,7 @@ jobname: <input type="text" ng-model="jobname"> <a ng-href="/projects/{{selected
     <!-- Spawn Instances -->
     <div class="renderopts" id="spawninstances" ng-show="tab == 'instances'">
         <div class="renderopts">
-            <!--<h3>Spawn Instances</h3>-->
+            Region: <select class="input-sm region" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.region" ng-options="r for r in regions" />
             <form class="simple-form">
               <ul>
                 <li>Check Pricing:
