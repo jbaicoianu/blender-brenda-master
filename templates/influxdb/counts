@@ -1,9 +1,0 @@
-[
-  {
-    "name": "brenda_jobs",
-    "columns": ["jobs", "instances"],
-    "points": [
-      [ JOBCOUNT, INSTANCECOUNT ]
-    ]
-  }
-]
