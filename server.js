@@ -49,6 +49,7 @@ var influxclient = influx({
   password : 'root',
   database : 'brenda'
 });
+procs.setDatabase(influxclient);
 influxclient.getDatabaseNames(function(err, dbnames) {
   // Create databases if they don't exist
   if (dbnames.indexOf('grafana') == -1) influxclient.createDatabase('grafana');
@@ -61,8 +62,8 @@ process.on('exit', function() {
 });
 
 // Start polling for instance and job information
-procs.checkInstanceCounts(influxclient);
-procs.checkJobCount(influxclient);
+procs.checkInstanceCounts();
+procs.checkJobCount();
 
 // socket setup
 

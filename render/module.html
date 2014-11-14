@@ -99,6 +99,24 @@
             display: inline-block !important;
             float: none !important;
         }
+        .job_args {
+          list-style: none;
+        }
+        .job_args label {
+          display: inline-block;
+          width: 6em;
+        }
+        .job_args label:after {
+          content: ':';
+          margin-right: .2em;
+        }
+        .job_args .simple-form label {
+          width: auto;
+        }
+        #job_renderargs_resx,
+        #job_renderargs_resy {
+          width: 6em;
+        }
         .socket_connection {
           position: absolute;
           right: 1em;
@@ -215,57 +233,67 @@
     <!-- Submit Job -->
     <div class="renderopts" id="jobqueue" ng-show="tab == 'jobqueue'">
         <div class="renderopts">
-           <form novalidate class="simpleform projectform">
-            Selected project: {{ selectedProject.name }} <br>
-                <select class="input-sm" ng-model="selectedProject" ng-change="getBlenderFiles()" ng-options="k for (k, v) in projects"></select>
-                <button ng-disabled="!connected" type="submit" class="btn btn-mini" bs-modal="'AddProjectModal.html'"><span class="icon-asterisk"></span></button>
-            </form>
-jobname: <input type="text" ng-model="jobname"> <a ng-href="/projects/{{selectedProject.name}}/jobs/{{jobname}}/" title="Download job data"><span class="icon-download-alt"></span></a><br>            <select class="input-sm" ng-model="jobstate" ng-options="s.value for s in jobtypes">
-            </select><br>
-                <form novalidate class="simple-form jobform" ng-hide="jobstate.value!='animation'">
-                    start:<input type="number" min="1" ng-model="animationArgs.start" id="start" class='rangeinput' />
-                    end:<input type="number" min="1" ng-model="animationArgs.numframes" id="numframes" class='rangeinput' />
-                    <br>
-                    <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitAnimJob()">
-                        Add Job
-                    </button>
-                    <!--<pre>{{ animationArgs }}</pre>-->
-                </form>
-                <form novalidate class="simple-form jobform" ng-hide="jobstate.value!='subframe'">
-                    start: <input type="number" min="0" ng-model="subframeArgs.start" id="numframes" class='rangeinput' />
-                    end: <input type="number" min="0" ng-model="subframeArgs.numframes" id="numframes" class='rangeinput' />
-                    frameskip: <input type="number" min="1" ng-model="subframeArgs.frameskip" id="frameskip" class='rangeinput' /><br>
-                    tilesX: <input type="number" min="1" ng-model="subframeArgs.tilesX" id="tilesx" class='rangeinput' />
-                    tilesY: <input type="number" min="1" ng-model="subframeArgs.tilesY" id="tilesy" class='rangeinput' />
-                    <br>
-                    <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitSubframeJob()">
-                        Populate Jobs
-                    </button>
-                    <!--<pre>{{ subframeArgs }}</pre>-->
-                </form>
-                <form novalidate class="simple-form jobform" ng-hide="jobstate.value!='bake'">
-                    numobjects:
+            <ul class="job_args">
+                <li>
+                    <label for="job_project">Project</label>
+                    <select id="job_project" class="input-sm" ng-model="selectedProject" ng-change="getBlenderFiles()" ng-options="k for (k, v) in projects"></select>
+                    <button ng-disabled="!connected" type="submit" class="btn btn-mini" bs-modal="'AddProjectModal.html'"><span class="icon-asterisk"></span></button>
+                </li>
+                <li>
+                    <label for="job_jobname">Job name</label>
+                    <input id="job_jobname" type="text" ng-model="jobname"> 
+                    <a ng-href="/projects/{{selectedProject.name}}/jobs/{{jobname}}/" title="Download job data"><span class="icon-download-alt"></span></a>
+                </li>
+                <li>
+                    <label for="job_jobtype">Job type</label>
+                    <select class="input-sm" id="job_jobtype" ng-model="jobtype" ng-options="s.value for s in jobtypes"> </select>
+                </li>
+                <li class="simple-form" ng-hide="jobtype.value!='animation'">
+                    <label for="job_args_start">Start</label> <input type="number" min="1" ng-model="animationArgs.start" id="job_args_start" class='rangeinput' />
+                    <label for="job_args_end">End</label> <input type="number" min="1" ng-model="animationArgs.end" id="job_args_end" class='rangeinput' />
+                    <label for="job_args_skip">Skip</label> <input type="number" min="1" ng-model="animationArgs.frameskip" id="job_args_skip" class='rangeinput' />
+                </li>
+                <li ng-hide="jobtype.value!='animation'">
+                    <input type="checkbox" class="cr1" ng-model="animationArgs.subframe" id="job_args_subframe"> <label class="cr1" for="job_args_subframe">Subframe</label>
+                    <div class="simple-form jobform" ng-hide="animationArgs.subframe!=true">
+                        <label for="job_args_tilesx">X</label> <input type="number" min="1" ng-model="animationArgs.tilesX" id="job_args_tilesx" class='rangeinput' />
+                        <label for="job_args_tilesy">Y</label> <input type="number" min="1" ng-model="animationArgs.tilesY" id="job_args_tilesy" class='rangeinput' />
+                    </div>
+                </li>
+                <li class="simple-form jobform" ng-hide="jobtype.value!='bake'">
+                    <label for="job_args_numobjects">Objects</label>
                     <input type="number" min="1" ng-model="bakeArgs.numobjects" id="numobjects" class='rangeinput' />
-                    <br>
-                    <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitBakeJob()">
-                        Populate Jobs
-                    </button>
-                    <!--<pre>{{ bakeArgs }}</pre>-->
-                </form>
+                </li>
+                <li>
+                    <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitJob()">Populate Jobs</button>
+                    <!--<pre>{{ animationArgs }}</pre>-->
+                </li>
+            </ul>
         </div>
         <div class="renderopts" id="brendaOptions">
-            <form novalidate class="simple-form">
-                job file:<select class="input-sm" ng-model="renderOpts.blenderFile" ng-options="i for i in blenderFiles" />
-                <button ng-click="getBlenderFiles()" ng-disabled="checking_files" class="btn btn-mini blender_files_refresh">
-                    <span ng-class="{'icon-refresh': !checking_files, 'icon-circle-arrow-down': checking_files}">
-                    </span>
-                </button><br>
-                res X:<input type="number" min="1" ng-model="renderOpts.renderResolutionX" /><br>
-                res Y:<input type="number" min="1" ng-model="renderOpts.renderResolutionY" /><br>
-                percentage: <input type="number" min="1" ng-model="renderOpts.renderPercentage" /><br>
-                samples: <input type="number" min="1" ng-model="renderOpts.samples" /><br>
-                device: <select ng-model="renderOpts.device" ng-options="i for i in devices" /><br>
-            </form> 
+            <ul class="job_args simple-form">
+                <li>
+                    <label for="job_renderargs_blenderfile">Job file</label>
+                    <select id="job_renderargs_blenderfile" class="input-sm" ng-model="renderOpts.blenderFile" ng-options="i for i in blenderFiles" />
+                    <button ng-click="getBlenderFiles()" ng-disabled="checking_files" class="btn btn-mini blender_files_refresh">
+                        <span ng-class="{'icon-refresh': !checking_files, 'icon-circle-arrow-down': checking_files}"></span>
+                    </button>
+                </li>
+                <li>
+                    <label for="job_renderargs_resx">Resolution</label> 
+                    <input type="number" min="1" ng-model="renderOpts.renderResolutionX" id="job_renderargs_resx" /> X 
+                    <input type="number" min="1" ng-model="renderOpts.renderResolutionY" id="job_renderargs_resy" />
+                </li>
+                <li>
+                    <label for="job_renderargs_percentage">Percentage</label> <input type="number" min="1" ng-model="renderOpts.renderPercentage" id="job_renderargs_percentage" />
+                </li>
+                <li>
+                    <label for="job_renderargs_samples">Samples</label> <input type="number" min="1" ng-model="renderOpts.samples" id="job_renderargs_samples" />
+                </li>
+                <li>
+                    <label for="job_renderargs_device">Device</label> <select ng-model="renderOpts.device" ng-options="i for i in devices" />
+                </li>
+            </ul> 
         </div>
     </div>
     <!-- Spawn Instances -->

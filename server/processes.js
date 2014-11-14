@@ -6,6 +6,11 @@ var glob = require('glob');
 var Processes = function() {
   this.children = [];
   this.instances = {};
+  this.db = false;
+};
+
+Processes.prototype.setDatabase = function(db) {
+  this.db = db;
 };
 
 Processes.prototype.getBlenderFiles = function(project, callback) {
@@ -48,12 +53,12 @@ Processes.prototype.submitJob = function(client, jobargs) {
   this.makeJobDir(jobargs.project.dir, jobargs.jobname, function() {
     this.buildConfig(jobargs, function() {
       if (jobargs.jobtype == 'animation') {
-        args = [jobargs.project.dir, jobargs.jobname, 'animation', '-s', jobargs.start, '-e', jobargs.numframes];
-      }
-      else if (jobargs.jobtype == 'subframe') {
-        args = [jobargs.project.dir, jobargs.jobname, 'subframe', '-s', jobargs.start, '-e', jobargs.numframes, '-X', jobargs.tilesX, '-Y', jobargs.tilesY];
-      }
-      else if (jobargs.jobtype == 'bake') {
+        if (jobargs.subframe) {
+          args = [jobargs.project.dir, jobargs.jobname, 'subframe', '-s', jobargs.start, '-e', jobargs.end, '-X', jobargs.tilesX, '-Y', jobargs.tilesY];
+        } else {
+          args = [jobargs.project.dir, jobargs.jobname, 'animation', '-s', jobargs.start, '-e', jobargs.end];
+        }
+      } else if (jobargs.jobtype == 'bake') {
         args = [jobargs.project.dir, jobargs.jobname, 'bake', '-e', jobargs.numobjects];
       }
       var child = spawn(global.config.spawn_jobs, args); // change to brenda-work
@@ -63,6 +68,9 @@ Processes.prototype.submitJob = function(client, jobargs) {
         console.log('stdout: ' + data);
         client.emit('stdout', data.toString());
       });
+      child.on('exit', function(code) {
+        this.checkJobCount();
+      }.bind(this));
     }.bind(this));
   }.bind(this));
 };
@@ -82,6 +90,10 @@ Processes.prototype.spawnInstance = function(client, instargs) {
   this.children.push(child);
   child.stdout.on('data', function(data) {
     console.log('stdout: ' + data);
+    client.emit('stdout', data.toString());
+  });
+  child.stderr.on('data', function(data) {
+    console.log('stderr: ' + data);
     client.emit('stdout', data.toString());
   });
 };
@@ -125,18 +137,22 @@ Processes.prototype.checkInstancePrice = function(client, instargs) {
     }
   });
 };
-Processes.prototype.checkInstanceCounts = function(influxdb) {
-  console.log('check instance counts');
-  regions = this.getRegionConfigs(function(files) {
+Processes.prototype.checkInstanceCounts = function() {
+  if (!this.db) return;
+
+  this.getRegionConfigs(function(files) {
     var regions = [];
     for (var i = 0; i < files.length; i++) {
       var parts = files[i].split('/');
       var regionconf = parts[parts.length - 1];
-      this.checkInstanceCountForRegion(influxdb, regionconf.substr(0, regionconf.indexOf('.')));
+      this.checkInstanceCountForRegion(regionconf.substr(0, regionconf.indexOf('.')));
     }
+    // Write the current instance counts into influxdb every 10 seconds
+    setInterval(function() { this.db.writePoint('instances', this.instances); }.bind(this), 10000);
   }.bind(this));
 };
-Processes.prototype.checkInstanceCountForRegion = function(influxdb, region) {
+Processes.prototype.checkInstanceCountForRegion = function(region) {
+  if (!this.db) return;
   var args = []; //'-i', instargs.instancetype];
   if (region && region.length > 0) {
     var regionConf = global.dirname + '/config/regions/' + region + '.conf';
@@ -155,13 +171,12 @@ Processes.prototype.checkInstanceCountForRegion = function(influxdb, region) {
   }.bind(this));
   child.on('exit', function(code) {
     this.instances[region] = instancecount;
-    // insert lines.length into influxdb
-    influxdb.writePoint('instances', this.instances);
     var refreshtime = (global.config.refresh && global.config.refresh.instances ? global.config.refresh.instances : 30000);
-    setTimeout(this.checkInstanceCountForRegion.bind(this, influxdb, region), refreshtime);
+    setTimeout(this.checkInstanceCountForRegion.bind(this, region), refreshtime);
   }.bind(this));
 };
-Processes.prototype.checkJobCount = function(influxdb) {
+Processes.prototype.checkJobCount = function() {
+  if (!this.db) return;
   var args = ['status'];
   //console.log('Check job count');
   var child = spawn('brenda-work', args);
@@ -174,9 +189,9 @@ Processes.prototype.checkJobCount = function(influxdb) {
     jobcount = lines[1];
   }.bind(this));
   child.on('exit', function(code) {
-    influxdb.writePoint('jobs', {'jobs': jobcount});
+    this.db.writePoint('jobs', {'jobs': jobcount});
     var refreshtime = (global.config.refresh && global.config.refresh.jobs ? global.config.refresh.jobs : 30000);
-    setTimeout(this.checkJobCount.bind(this, influxdb), refreshtime);
+    setTimeout(this.checkJobCount.bind(this), refreshtime);
   }.bind(this));
 };
 

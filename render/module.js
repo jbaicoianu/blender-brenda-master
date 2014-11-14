@@ -184,23 +184,16 @@ define([
       value: 'animation',
       text: 'Animation'
     }, {
-      value: 'subframe',
-      text: 'Subframe'
-    }, {
       value: 'bake',
       text: 'bake'
     }];
-    $scope.jobstate = $scope.jobtypes[0];
+    $scope.jobtype = $scope.jobtypes[0];
     $scope.animationArgs = {
       jobtype: 'animation',
       start: 1,
-      numframes: 1,
-    };
-    $scope.subframeArgs = {
-      jobtype: 'subframe',
-      start: 1,
-      numframes: 1,
+      end: 1,
       frameskip: 1,
+      subframe: false,
       tilesX: 1,
       tilesY: 1
     };
@@ -274,20 +267,20 @@ define([
       xhr.open('POST', uploadUrl);
       xhr.send(fd);
     };
+    $scope.submitJob = function() {
+      console.log($scope.jobtype, $scope.animationArgs);
+      if ($scope.jobtype.value == 'animation') {
+          $scope.submitAnimJob();
+      } else if ($scope.jobtype.value == 'bake') {
+          $scope.submitBakeJob();
+      }
+    };
     $scope.submitAnimJob = function() {
       if ($scope.client_id) {
         $scope.animationArgs['jobname'] = $scope.jobname;
         $scope.animationArgs['project'] = $scope.selectedProject;
         $scope.animationArgs['renderOpts'] = $scope.renderOpts;
         socket.emit('submitjob', $scope.animationArgs);
-      }
-    };
-    $scope.submitSubframeJob = function() {
-      if ($scope.client_id) {
-        $scope.subframeArgs['jobname'] = $scope.jobname;
-        $scope.subframeArgs['project'] = $scope.selectedProject;
-        $scope.subframeArgs['renderOpts'] = $scope.renderOpts;
-        socket.emit('submitjob', $scope.subframeArgs);
       }
     };
     $scope.submitBakeJob = function() {
