@@ -5,6 +5,7 @@ var glob = require('glob');
 
 var Processes = function() {
   this.children = [];
+  this.instances = {};
 };
 
 Processes.prototype.getBlenderFiles = function(project, callback) {
@@ -123,6 +124,60 @@ Processes.prototype.checkInstancePrice = function(client, instargs) {
       client.emit('priceupdate', 'No price info');
     }
   });
+};
+Processes.prototype.checkInstanceCounts = function(influxdb) {
+  console.log('check instance counts');
+  regions = this.getRegionConfigs(function(files) {
+    var regions = [];
+    for (var i = 0; i < files.length; i++) {
+      var parts = files[i].split('/');
+      var regionconf = parts[parts.length - 1];
+      this.checkInstanceCountForRegion(influxdb, regionconf.substr(0, regionconf.indexOf('.')));
+    }
+  }.bind(this));
+};
+Processes.prototype.checkInstanceCountForRegion = function(influxdb, region) {
+  var args = []; //'-i', instargs.instancetype];
+  if (region && region.length > 0) {
+    var regionConf = global.dirname + '/config/regions/' + region + '.conf';
+    args = args.concat(['-c', regionConf]);
+  }
+  args.push('instances');
+  //console.log('Check instance count for region ' + region, args);
+  var child = spawn('brenda-tool', args);
+  this.children.push(child);
+
+  var instancecount = 0;
+  //this.instances[region] = 0;
+  child.stdout.on('data', function(data) {
+    var lines = data.toString().trim().split('\n');
+    instancecount = lines.length;
+  }.bind(this));
+  child.on('exit', function(code) {
+    this.instances[region] = instancecount;
+    // insert lines.length into influxdb
+    influxdb.writePoint('instances', this.instances);
+    var refreshtime = (global.config.refresh && global.config.refresh.instances ? global.config.refresh.instances : 30000);
+    setTimeout(this.checkInstanceCountForRegion.bind(this, influxdb, region), refreshtime);
+  }.bind(this));
+};
+Processes.prototype.checkJobCount = function(influxdb) {
+  var args = ['status'];
+  //console.log('Check job count');
+  var child = spawn('brenda-work', args);
+  this.children.push(child);
+
+  var jobcount = 0;
+  //this.instances[region] = 0;
+  child.stdout.on('data', function(data) {
+    var lines = data.toString().trim().split(': ');
+    jobcount = lines[1];
+  }.bind(this));
+  child.on('exit', function(code) {
+    influxdb.writePoint('jobs', {'jobs': jobcount});
+    var refreshtime = (global.config.refresh && global.config.refresh.jobs ? global.config.refresh.jobs : 30000);
+    setTimeout(this.checkJobCount.bind(this, influxdb), refreshtime);
+  }.bind(this));
 };
 
 Processes.prototype.makeJobDir = function(projectDir, jobname, callback) {

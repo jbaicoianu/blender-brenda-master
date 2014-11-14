@@ -18,7 +18,8 @@ var express         = require('express'),
     io              = require('socket.io').listen(server),
     procs           = require('./server/processes')(spawn, io),
     serveIndex      = require('serve-index'),
-    serveStatic     = require('serve-static');
+    serveStatic     = require('serve-static'),
+    influx          = require('influx');
 
 
 // file handler
@@ -40,11 +41,24 @@ app.use(express.static(__dirname + '/grafana/dist'));
 app.use('/projects', serveIndex(global.config.projects_dir, {'icons': true}));
 app.use('/projects', serveStatic(global.config.projects_dir));
 
+// InfluxDB connection
+var influxclient = influx({
+  host : 'localhost',
+  port : 8086, // optional, default 8086
+  username : 'root',
+  password : 'root',
+  database : 'brenda'
+});
+
 // make sure children die
 
 process.on('exit', function() {
   procs.killAll();
 });
+
+// Start polling for instance and job information
+procs.checkInstanceCounts(influxclient);
+procs.checkJobCount(influxclient);
 
 // socket setup
 
@@ -122,6 +136,5 @@ app.post('/api/upload:client_id', function(req, res) {
     });
   });
 });
-
 
 console.log("server listening on", global.config.port);
