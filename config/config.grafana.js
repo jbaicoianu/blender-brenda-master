@@ -21,7 +21,7 @@ define(['settings'], function(Settings) {
       datasources: {
         influxdb: {
           type: 'influxdb',
-          url: dbserver + "/db/brenda_jobs",
+          url: dbserver + "/db/brenda",
           username: 'root',
           password: 'root',
         },
