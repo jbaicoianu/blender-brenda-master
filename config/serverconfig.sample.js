@@ -21,6 +21,12 @@ var config = {
     brenda_run:     'brenda-run',
     projects_dir:   '/tmp/projects',
 
+    // Intervals for data refreshes
+    refresh: {
+      jobs: 20000,
+      instances: 30000
+    }
+
 };
 
 module.exports = config;
