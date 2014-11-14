@@ -49,9 +49,13 @@ var influxclient = influx({
   password : 'root',
   database : 'brenda'
 });
+influxclient.getDatabaseNames(function(err, dbnames) {
+  // Create databases if they don't exist
+  if (dbnames.indexOf('grafana') == -1) influxclient.createDatabase('grafana');
+  if (dbnames.indexOf('brenda') == -1) influxclient.createDatabase('brenda');
+});
 
 // make sure children die
-
 process.on('exit', function() {
   procs.killAll();
 });
