@@ -135,6 +135,12 @@
         .job_args .simple-form label {
           width: auto;
         }
+        .job_args .simple-form select {
+          width: auto;
+        }
+        .job_args .simple-form input {
+          width: 5em;
+        }
         #job_renderargs_resx,
         #job_renderargs_resy {
           width: 6em;
@@ -283,8 +289,19 @@
                     </div>
                 </li>
                 <li class="simple-form jobform" ng-hide="jobtype.value!='bake'">
+                    <!--
+                    <label for="job_args_baketype">Bake Type</label>
+                    <select ng-model="bakeArgs.baketype" ng-options="v for (k,v) in baketypes" />
+                    -->
+
+                    <label for="job_args_uvlayer">UV Layer</label>
+                    <input type="text" ng-model="bakeArgs.bakeuvlayer" id="job_args_uvlayer" />
+
                     <label for="job_args_numobjects">Objects</label>
-                    <input type="number" min="1" ng-model="bakeArgs.numobjects" id="numobjects" class='rangeinput' />
+                    <input type="number" min="1" ng-model="bakeArgs.numobjects" id="job_args_numobjects" class='rangeinput' />
+
+                    <label for="job_args_bakemargin">Margin</label>
+                    <input type="number" min="0" ng-model="bakeArgs.bakemargin" id="job_args_bakemargin" class='rangeinput' />
                 </li>
                 <li>
                     <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitJob()">Populate Jobs</button>

@@ -5,13 +5,26 @@ Brenda template for distributed cycles baking
 import bpy
 import sys
 
+# quality settings
+bpy.context.scene.render.resolution_x = $BLENDER_RENDER_RESOLUTION_X
+bpy.context.scene.render.resolution_y = $BLENDER_RENDER_RESOLUTION_Y
+bpy.context.scene.render.resolution_percentage = $BLENDER_RENDER_RESOLUTION_PERCENTAGE
+bpy.context.scene.cycles.samples = $BLENDER_CYCLES_SAMPLES
+bpy.context.scene.cycles.device = "$BLENDER_CYCLES_DEVICE"
+
+try:
+  bpy.context.user_preferences.system.compute_device_type = 'CUDA'
+  bpy.context.user_preferences.system.compute_device = 'CUDA_0'
+except:
+  pass
+
 # config
-numsamples = 100
-numbounces = 16
-lightmapsize = 4096
-baketype = "COMBINED"
-uvlayername = "LightMap"
-tilesize = 8
+lightmapsize_width = $BLENDER_RENDER_RESOLUTION_X
+lightmapsize_height = $BLENDER_RENDER_RESOLUTION_Y
+
+baketype = "$BLENDER_BAKE_TYPE"
+uvlayername = "$BLENDER_BAKE_UVLAYER"
+bakemargin = $BLENDER_BAKE_MARGIN
 
 # determine outdir from blender arguments
 argv = sys.argv[sys.argv.index("--") + 1:] 
@@ -38,7 +51,7 @@ def get_material(slotnum, obj):
 	lightmapname = get_lightmap_name(slotnum, obj)
 	if lightmapname not in bakeimages:
 		fullname = lightmapname + '_' + obj.name
-		bpy.ops.image.new(name=fullname, width=lightmapsize, height=lightmapsize, alpha=True)
+		bpy.ops.image.new(name=fullname, width=lightmapsize_width, height=lightmapsize_height, alpha=True)
 		bakeimages[lightmapname] = bpy.data.images[fullname]
 		
 	if lightmapname not in bakematerials:
@@ -80,13 +93,6 @@ def bake_object(objnum):
 	obj = objects[objnum]
 
 	bpy.context.scene.objects.active = obj
-	bpy.context.scene.cycles.samples = numsamples
-	bpy.context.scene.cycles.max_bounces = numbounces
-	bpy.context.scene.cycles.max_bounces = numbounces
-	bpy.context.scene.cycles.transparent_max_bounces = numbounces
-
-	bpy.context.scene.render.tile_x = tilesize
-	bpy.context.scene.render.tile_y = tilesize
 
 	obj.select = True
 
@@ -98,7 +104,7 @@ def bake_object(objnum):
 
 
 	# bake it!
-	bpy.ops.object.bake(type=baketype, use_clear=True)
+	bpy.ops.object.bake(type=baketype, use_clear=True, margin=bakemargin)
 
 	print("baked!")
 	for img in bakeimages:

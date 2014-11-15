@@ -40,9 +40,20 @@ Processes.prototype.buildConfig = function(opts, callback) {
     'BLENDER_RENDER_RESOLUTION_PERCENTAGE=' + opts.renderOpts.renderPercentage,
     'BLENDER_CYCLES_SAMPLES=' + opts.renderOpts.samples,
     'BLENDER_CYCLES_DEVICE=' + opts.renderOpts.device
-    ].join('\n');
+    ];
+  if (opts.jobtype == "bake") {
+    var baketype = opts.baketype || 'COMBINED',
+        bakemargin = opts.bakemargin || 0,
+        bakeuvlayer = opts.bakeuvlayer || 'LightMap';
+    configLines.push('BLENDER_BAKE_TYPE=' + baketype);
+    configLines.push('BLENDER_BAKE_MARGIN=' + bakemargin);
+    configLines.push('BLENDER_BAKE_UVLAYER=' + bakeuvlayer);
+  }
+console.log('do it!', opts, configLines);
+
+  var configText = configLines.join('\n') + '\n';
   var path = global.config.projects_dir + '/' + opts.project.dir + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf';
-  fs.writeFile(path, configLines, function(err) {
+  fs.writeFile(path, configText, function(err) {
     if (err) { console.log(err) } 
     callback();
   });
