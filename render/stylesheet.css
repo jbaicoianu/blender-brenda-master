@@ -63,7 +63,7 @@ h3 {
 }
 #jobqueue {
   margin-right: 200px;
-  padding: 0 1em;
+  padding: 1em;
 }
 #spawninstances {
   margin-right: 200px;
@@ -121,6 +121,7 @@ h3 {
 }
 .job_args {
   list-style: none;
+  margin: 0;
 }
 .job_args label {
   display: inline-block;
@@ -168,7 +169,16 @@ select.instance_type {
 .topmenu {
   display: block;
 }
-
+#render-panel::after {
+  display: block;
+  height: 0;
+  content: '.';
+  visibility: hidden;
+  clear: both;
+}
+.render-footer {
+  clear: both;
+}
 @media screen and (max-width: 800px) {
   #debug {
     display: none;
@@ -176,6 +186,9 @@ select.instance_type {
   #spawninstances {
     margin: 0;
     padding: 0;
+  }
+  #jobqueue {
+    margin-right: 0;
   }
   .main-view-container {
     padding-right: 0;
