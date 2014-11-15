@@ -1,6 +1,5 @@
 <div ng-controller='render' ng-init="tab = 'jobqueue'" style="height:350px">
     <link rel="stylesheet" type="text/css" href="/app/panels/render/stylesheet.css" />
-
     <!-- Add project modal -->
     <script type="text/ng-template" id="AddProjectModal.html">
         <div class="modal-header">
@@ -156,6 +155,7 @@
                 </li>
                 <li>Current Price: <strong class="estimated_price">${{ getEstimatedCurrentPrice() }}/hr</strong></li>
                 <li>Max Price: <strong class="estimated_price" ng-class="{price_toolow: !isMaxPriceHighEnough(), price_ok: isMaxPriceHighEnough()}">${{ getEstimatedMaxPrice() }}/hr</strong></li>
+                <li><input type="checkbox" class="cr1" ng-model="instanceArgs.dryrun" id="instance_args_dryrun"> <label class="cr1" for="instance_args_dryrun">Dry Run</label></li>
                 <li> <button type="submit" class="btn btn-primary btn-lg" bs-modal="'SpawnInstancesModal.html'"> Spawn Instances </button></li>
               </ul>
             </form>
