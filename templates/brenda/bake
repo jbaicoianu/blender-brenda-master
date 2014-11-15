@@ -25,6 +25,7 @@ lightmapsize_height = $BLENDER_RENDER_RESOLUTION_Y
 baketype = "$BLENDER_BAKE_TYPE"
 uvlayername = "$BLENDER_BAKE_UVLAYER"
 bakemargin = $BLENDER_BAKE_MARGIN
+bakeseparator = '::'
 
 # determine outdir from blender arguments
 argv = sys.argv[sys.argv.index("--") + 1:] 
@@ -50,7 +51,7 @@ def get_lightmap_name(slotnum, obj):
 def get_material(slotnum, obj):
 	lightmapname = get_lightmap_name(slotnum, obj)
 	if lightmapname not in bakeimages:
-		fullname = lightmapname + '_' + obj.name
+		fullname = lightmapname + bakeseparator + obj.name
 		bpy.ops.image.new(name=fullname, width=lightmapsize_width, height=lightmapsize_height, alpha=True)
 		bakeimages[lightmapname] = bpy.data.images[fullname]
 		
@@ -108,7 +109,7 @@ def bake_object(objnum):
 
 	print("baked!")
 	for img in bakeimages:
-		fname = outdir + '/' + img + '_' + obj.name + '.png'
+		fname = outdir + '/' + img + bakeseparator + obj.name + '.png'
 		print("save lightmap: %s" % (fname))
 		bakeimages[img].save_render(fname)
 
