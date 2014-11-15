@@ -67,7 +67,7 @@ h3 {
 }
 #spawninstances {
   margin-right: 200px;
-  padding: 0 1em;
+  padding: 1em;
 }
 .renderopts>h3 {
   margin-top: 0;
@@ -127,7 +127,12 @@ h3 {
   display: inline-block;
   width: 6em;
 }
-.job_args label:after {
+.instance_args label[for] {
+  display: inline-block;
+  width: 7em;
+}
+.job_args label[for]::after,
+.instance_args label[for]::after {
   content: ':';
   margin-right: .2em;
 }

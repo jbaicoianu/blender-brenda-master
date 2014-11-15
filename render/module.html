@@ -88,10 +88,8 @@
                     </div>
                 </li>
                 <li class="simple-form jobform" ng-hide="jobtype.value!='bake'">
-                    <!--
                     <label for="job_args_baketype">Bake Type</label>
                     <select ng-model="bakeArgs.baketype" ng-options="v for (k,v) in baketypes" />
-                    -->
 
                     <label for="job_args_uvlayer">UV Layer</label>
                     <input type="text" ng-model="bakeArgs.bakeuvlayer" id="job_args_uvlayer" />
@@ -135,13 +133,14 @@
         </div>
     </div>
     <!-- Spawn Instances -->
-    <div id="spawninstances" ng-show="tab == 'instances'">
+    <div id="spawninstances" class="instance_args" ng-show="tab == 'instances'">
         <div class="renderopts">
-            Region: <select class="input-sm region" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.region" ng-options="r for r in regions" />
+            <label for="instance_region">Region</label> <select id="instance_region" class="input-sm region" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.region" ng-options="r for r in regions" />
             <form class="simple-form">
               <ul>
-                <li>Check Pricing:
-                    <select class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class="btn btn-mini instance_price_refresh"><span ng-class="{'icon-refresh': !checking_price, 'icon-circle-arrow-down': checking_price}"></span></button></li>
+                <li>
+                    <label for="instance_type">Check Pricing</label>
+                    <select id="instance_type" class="input-sm instance_type" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.instancetype" ng-options="s for s in instancetypes" /></select><button ng-click="getInstancePrice(instanceArgs.instancetype)" ng-disabled="checking_price" class="btn btn-mini instance_price_refresh"><span ng-class="{'icon-refresh': !checking_price, 'icon-circle-arrow-down': checking_price}"></span></button></li>
                     <ul class="instance_prices">
                         <li ng-repeat="(zone, price) in instancePrices[instanceArgs.instancetype]" ng-class="{'btn-primary': zone == instanceArgs.availabilityzone}" class="btn btn-lg">
                             <label><input type="radio" name="availabilityzone" ng-model="instanceArgs.availabilityzone" value="{{zone}}"><h4>{{zone}}</h4><em class="instance_price">{{price}}</em></label>
