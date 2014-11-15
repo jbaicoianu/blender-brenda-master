@@ -11,7 +11,7 @@ INCOMINGDIR=$JOBDIR/scratch/incoming
 [ ! -d "$INCOMINGDIR" ] && mkdir -p "$INCOMINGDIR"
 [ ! -d "$PARTIALDIR" ] && mkdir -p "$PARTIALDIR"
 
-DEBUGNAME=output-sync
+DEBUGNAME=sync
 DEBUGFILE=$JOBDIR/scratch/log
 . ./scripts/brenda/job-debug.sh
 
@@ -27,13 +27,13 @@ while true; do
   COUNT=$(find "$PARTIALDIR" -type f -cnewer "$SYNCFILE" |wc -l)
   if [ $COUNT -gt 0 ]; then
     find "$PARTIALDIR" -type f -cnewer "$SYNCFILE" -exec ln -sf {} "$INCOMINGDIR/" \;
-    debug_log "Synced $COUNT files"
+    debug_log "$COUNT new files"
   fi
   touch "$SYNCFILE"
 
   # Check for doneness
   if [ -e "$JOBDIR/scratch/DONE" ]; then
-    debug_log "Job marked as complete, exiting"
+    debug_log "Job complete, exiting"
     exit
   fi
 
