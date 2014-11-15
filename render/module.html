@@ -89,7 +89,7 @@
                 </li>
                 <li class="simple-form jobform" ng-hide="jobtype.value!='bake'">
                     <label for="job_args_baketype">Bake Type</label>
-                    <select ng-model="bakeArgs.baketype" ng-options="v for (k,v) in baketypes" />
+                    <select ng-model="bakeArgs.baketype" ng-options="k as v for (k,v) in baketypes" />
 
                     <label for="job_args_uvlayer">UV Layer</label>
                     <input type="text" ng-model="bakeArgs.bakeuvlayer" id="job_args_uvlayer" />
