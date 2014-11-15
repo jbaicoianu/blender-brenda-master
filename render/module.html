@@ -1,6 +1,5 @@
-<div id="render-panel" ng-controller='render' ng-init="tab = 'jobqueue'">
+<div ng-controller='render' ng-init="tab = 'jobqueue'" style="height:350px">
     <link rel="stylesheet" type="text/css" href="/app/panels/render/stylesheet.css" />
-
     <!-- Add project modal -->
     <script type="text/ng-template" id="AddProjectModal.html">
         <div class="modal-header">
@@ -88,21 +87,24 @@
                         <label for="job_args_tilesy">Y</label> <input type="number" min="1" ng-model="animationArgs.tilesY" id="job_args_tilesy" class='rangeinput' />
                     </div>
                 </li>
-                <li ng-hide="jobtype.value!='bake'">
-                    <div class="simple-form">
-                        <label for="job_args_baketype">Bake Type</label>
-                        <select ng-model="bakeArgs.baketype" ng-options="k as v for (k,v) in baketypes" />
+                <li class="simple-form jobform" ng-hide="jobtype.value!='bake'">
+                    <!--
+                    <label for="job_args_baketype">Bake Type</label>
+                    <select ng-model="bakeArgs.baketype" ng-options="v for (k,v) in baketypes" />
+                    -->
 
-                        <label for="job_args_uvlayer">UV Layer</label>
-                        <input type="text" ng-model="bakeArgs.bakeuvlayer" id="job_args_uvlayer" />
-                    </div>
-                    <div class="simple-form">
-                      <label for="job_args_numobjects">Objects</label>
-                      <input type="number" min="1" ng-model="bakeArgs.numobjects" id="job_args_numobjects" class='rangeinput' />
+                    <label for="job_args_uvlayer">UV Layer</label>
+                    <input type="text" ng-model="bakeArgs.bakeuvlayer" id="job_args_uvlayer" />
 
-                      <label for="job_args_bakemargin">Margin</label>
-                      <input type="number" min="0" ng-model="bakeArgs.bakemargin" id="job_args_bakemargin" class='rangeinput' />
-                    </div>
+                    <label for="job_args_numobjects">Objects</label>
+                    <input type="number" min="1" ng-model="bakeArgs.numobjects" id="job_args_numobjects" class='rangeinput' />
+
+                    <label for="job_args_bakemargin">Margin</label>
+                    <input type="number" min="0" ng-model="bakeArgs.bakemargin" id="job_args_bakemargin" class='rangeinput' />
+                </li>
+                <li>
+                    <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitJob()">Populate Jobs</button>
+                    <!--<pre>{{ animationArgs }}</pre>-->
                 </li>
             </ul>
         </div>
@@ -130,10 +132,6 @@
                     <label for="job_renderargs_device">Device</label> <select ng-model="renderOpts.device" ng-options="i for i in devices" />
                 </li>
             </ul> 
-        </div>
-        <div class="renderfooter">
-            <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitJob()">Populate Jobs</button>
-            <!--<pre>{{ animationArgs }}</pre>-->
         </div>
     </div>
     <!-- Spawn Instances -->
