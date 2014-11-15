@@ -1,7 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
 PROJECTNAME=$1
 JOBNAME=$2
+JOBTYPE=$3
 
 # Directory shortcut variables
 PROJECTROOT=/mnt/projects
@@ -15,37 +16,70 @@ PROCESSEDDIR=$JOBDIR/scratch/processed
 [ ! -d "$PROCESSINGDIR" ] && mkdir -p "$PROCESSINGDIR"
 [ ! -d "$PROCESSEDDIR" ] && mkdir -p "$PROCESSEDDIR"
 
-DEBUGNAME=combine-subframe
+DEBUGNAME=combine
 DEBUGFILE=$JOBDIR/scratch/log
 . ./scripts/brenda/job-debug.sh
 
-
+animation_get_filename() {
+  # Simple case, just change the directory
+  INFILE=$1
+  FNAME=$(basename $INFILE)
+  echo $JOBDIR/$FNAME
+}
 subframe_get_filename() {
   # Given a subframe filename, extract the frame name (eg. frame_000470_X-0.5-0.75-Y-0.25-0.5.png => frame_000470.png)
   INFILE=$1
   FNAME=$(basename $INFILE |sed -Ee 's/_X-[0-9\.]+-[0-9\.]+-Y-[0-9\.]+-[0-9\.]+\./\./')
   echo $JOBDIR/$FNAME
 }
-subframe_combine() {
+bake_get_filename() {
+  # Given a bake subtask filename, extract the bake image name (eg. lightmap-interior::floor.png => lightmap-interior.png)
   INFILE=$1
-  OUTFILE=$(subframe_get_filename "$INFILE")
-  DONEFILE=$PROCESSEDDIR/$(basename $INFILE)
-  # Create blank subframe file if this is our first time seeing this frame
-  if [ ! -e $OUTFILE ]; then
-    subframe_create "$OUTFILE"
-  fi
-  debug_log "Combining $INFILE with $OUTFILE"
-  if composite "$OUTFILE" "$INFILE" "$OUTFILE"; then
-    mv "$INFILE" "$DONEFILE"
-  fi
+  FNAME=$(basename $INFILE |sed -Ee 's/::.*?\.png/.png/')
+  echo $JOBDIR/$FNAME
 }
-subframe_create() {
+job_get_filename() {
+  INFILE=$1
+  case "$JOBTYPE" in
+    "animation" )
+      animation_get_filename "$INFILE"
+      ;;
+    "subframe" )
+      subframe_get_filename "$INFILE"
+      ;;
+    "bake" )
+      bake_get_filename "$INFILE"
+      ;;
+  esac
+}
+job_combine() {
+  INFILE=$1
+  OUTFILE=$(job_get_filename "$INFILE")
+  DONEFILE=$PROCESSEDDIR/$(basename $INFILE)
+
+  case "$JOBTYPE" in
+    "animation")
+      ln -s "$INFILE" "$OUTFILE"
+      ;;
+    *)
+      # Create blank subframe file if this is our first time seeing this frame
+      if [ ! -e $OUTFILE ]; then
+        job_create_outfile "$OUTFILE"
+      fi
+      if composite "$OUTFILE" "$INFILE" "$OUTFILE"; then
+        mv "$INFILE" "$DONEFILE"
+      fi
+      ;;
+  esac
+  debug_log "$INFILE => $OUTFILE"
+}
+job_create_outfile() {
   OUTFILE=$1
-  debug_log "Creating new output file '$OUTFILE'"
   convert -size 1x1 xc:white "$OUTFILE"
+  debug_log "New outfile '$OUTFILE'"
   #echo .
 }
-subframe_get_incoming_file() {
+job_get_incoming_file() {
   # Check the incoming directory for files.  If any exist, move the first one into the processing directory, and return its name
   NEWFILE=$(find "$INCOMINGDIR" -type l |head -1)
   if [ ! -z "$NEWFILE" ] && [ -e "$NEWFILE" ]; then
@@ -55,22 +89,22 @@ subframe_get_incoming_file() {
   fi
 }
 
-subframe_combine_incoming() {
+job_combine_incoming() {
   # Clear out the incoming directory of any existing files
-  FNAME=$(subframe_get_incoming_file)
+  FNAME=$(job_get_incoming_file)
   while [ ! -z "$FNAME" ]; do
-    subframe_combine "$FNAME"
-    FNAME=$(subframe_get_incoming_file)
+    job_combine "$FNAME"
+    FNAME=$(job_get_incoming_file)
   done
 }
 
 debug_log "Monitoring $INCOMINGDIR for new files..."
 while true; do
-  subframe_combine_incoming
+  job_combine_incoming
   if [ -e "$JOBDIR/scratch/DONE" ]; then
     # Call this one last time just to make sure we're not caught in a race condition.  It should be a no-op.
-    subframe_combine_incoming
-    debug_log "Job marked as complete, exiting"
+    job_combine_incoming
+    debug_log "Job complete, exiting"
     exit
   fi
   sleep 1

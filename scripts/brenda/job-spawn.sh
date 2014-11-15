@@ -29,6 +29,6 @@ brenda-work --config="$JOBCONFIG" -T templates/brenda/$JOBTYPE $JOBARGS push
 # Watch S3 for finished data and sync them for further processing
 ./scripts/brenda/job-output-sync.sh "$PROJECTNAME" "$JOBNAME" &
 
-# (for single-frame renders) Automatically combine new frames into final output image
-./scripts/brenda/job-output-combine-subframe.sh "$PROJECTNAME" "$JOBNAME" &
+# Automatically combine new data into final output
+./scripts/brenda/job-output-combine.sh "$PROJECTNAME" "$JOBNAME" "$JOBTYPE" &
 
