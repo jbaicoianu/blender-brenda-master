@@ -3,6 +3,6 @@ debug_log() {
   DEBUGDIR=$(dirname $DEBUGFILE)
   [ ! -d "$DEBUGDIR" ] && mkdir -p "$DEBUGDIR"
   echo "$DEBUGDATE\t$DEBUGNAME\t$@" >>$DEBUGFILE
-  #echo "$DEBUGDATE\t$DEBUGNAME\t$@"
+  echo "$DEBUGDATE\t$DEBUGNAME\t$@"
 }
 
