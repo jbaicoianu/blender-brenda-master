@@ -35,11 +35,16 @@
           overflow: scroll;
         }
         #stdout {
+          list-style: none;
+          padding: 0;
+          margin: 0;
         }
         #stdout li {
           border-bottom: 1px solid #333;
           font-family: monospace;
           white-space: pre;
+          font-size: .8em;
+          line-height: 1.2em;
         }
         #jobqueue {
           margin-right: 200px;
@@ -248,12 +253,12 @@
                     <label for="job_jobtype">Job type</label>
                     <select class="input-sm" id="job_jobtype" ng-model="jobtype" ng-options="s.value for s in jobtypes"> </select>
                 </li>
-                <li class="simple-form" ng-hide="jobtype.value!='animation'">
+                <li class="simple-form" ng-hide="jobtype.value!='frames'">
                     <label for="job_args_start">Start</label> <input type="number" min="1" ng-model="animationArgs.start" id="job_args_start" class='rangeinput' />
                     <label for="job_args_end">End</label> <input type="number" min="1" ng-model="animationArgs.end" id="job_args_end" class='rangeinput' />
                     <label for="job_args_skip">Skip</label> <input type="number" min="1" ng-model="animationArgs.frameskip" id="job_args_skip" class='rangeinput' />
                 </li>
-                <li ng-hide="jobtype.value!='animation'">
+                <li ng-hide="jobtype.value!='frames'">
                     <input type="checkbox" class="cr1" ng-model="animationArgs.subframe" id="job_args_subframe"> <label class="cr1" for="job_args_subframe">Subframe</label>
                     <div class="simple-form jobform" ng-hide="animationArgs.subframe!=true">
                         <label for="job_args_tilesx">X</label> <input type="number" min="1" ng-model="animationArgs.tilesX" id="job_args_tilesx" class='rangeinput' />
@@ -326,10 +331,7 @@
     <div id="debug">
         stdout:
         <ul id="stdout">
-            <li ng-repeat="line in stdout track by $index">
-                {{ line }}
-                <span ng-show="! $last"><br></span>
-            </li>
+            <li ng-repeat="line in stdout track by $index">{{ line }}</li>
         </ul>
     </div>
 </div>

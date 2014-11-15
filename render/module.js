@@ -151,6 +151,7 @@ define([
     });
     socket.on('stdout', function(data) {
       $scope.stdout = $scope.stdout.concat(data);
+      $scope.scrollDebugToBottom();
     });
     socket.on('exit', function(data) {
       $scope.exitstate = $scope.exitstate.concat(data);
@@ -181,11 +182,11 @@ define([
     });
     // job queue args
     $scope.jobtypes = [{
-      value: 'animation',
-      text: 'Animation'
+      value: 'frames',
+      text: 'Frames'
     }, {
       value: 'bake',
-      text: 'bake'
+      text: 'Bake'
     }];
     $scope.jobtype = $scope.jobtypes[0];
     $scope.animationArgs = {
@@ -269,7 +270,7 @@ define([
     };
     $scope.submitJob = function() {
       console.log($scope.jobtype, $scope.animationArgs);
-      if ($scope.jobtype.value == 'animation') {
+      if ($scope.jobtype.value == 'frames') {
           $scope.submitAnimJob();
       } else if ($scope.jobtype.value == 'bake') {
           $scope.submitBakeJob();
@@ -346,6 +347,15 @@ define([
         return true;  
       }
       return false;
+    }
+    $scope.scrollDebugToBottom = function() {
+      console.log('scroll the debug window');
+      setTimeout(function() {
+        var debug = document.getElementById('debug');
+        if (debug) {
+          debug.scrollTop = debug.scrollHeight;
+        }
+      }, 0);
     }
     $scope.init = function() {
       panelSrv.init(this);
