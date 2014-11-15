@@ -1,12 +1,17 @@
 cat >rendersettings.py <<EOF
 import bpy
+# quality settings
 bpy.context.scene.render.resolution_x = $BLENDER_RENDER_RESOLUTION_X
 bpy.context.scene.render.resolution_y = $BLENDER_RENDER_RESOLUTION_Y
 bpy.context.scene.render.resolution_percentage = $BLENDER_RENDER_RESOLUTION_PERCENTAGE
 bpy.context.scene.cycles.samples = $BLENDER_CYCLES_SAMPLES
 bpy.context.scene.cycles.device = "$BLENDER_CYCLES_DEVICE"
 
-bpy.context.user_preferences.system.compute_device_type = 'CUDA'
-bpy.context.user_preferences.system.compute_device = 'CUDA_0'
+try:
+  bpy.context.user_preferences.system.compute_device_type = 'CUDA'
+  bpy.context.user_preferences.system.compute_device = 'CUDA_0'
+except:
+  pass
+
 EOF
 blender -b $BLENDER_FILE -P rendersettings.py -F PNG -o $OUTDIR/frame_###### -s $START -e $END -j $STEP -t 0 -a

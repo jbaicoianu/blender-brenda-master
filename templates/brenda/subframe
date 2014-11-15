@@ -13,8 +13,11 @@ bpy.context.scene.render.resolution_percentage = $BLENDER_RENDER_RESOLUTION_PERC
 bpy.context.scene.cycles.samples = $BLENDER_CYCLES_SAMPLES
 bpy.context.scene.cycles.device = "$BLENDER_CYCLES_DEVICE"
 
-bpy.context.user_preferences.system.compute_device_type = 'CUDA'
-bpy.context.user_preferences.system.compute_device = 'CUDA_0'
+try:
+  bpy.context.user_preferences.system.compute_device_type = 'CUDA'
+  bpy.context.user_preferences.system.compute_device = 'CUDA_0'
+except:
+  pass
 
 EOF
 blender -b $BLENDER_FILE -P subframe.py -F PNG -o $OUTDIR/frame_######_X-$SF_MIN_X-$SF_MAX_X-Y-$SF_MIN_Y-$SF_MAX_Y -s $START -e $END -j $STEP -t 0 -a
