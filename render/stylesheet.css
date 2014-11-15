@@ -63,11 +63,11 @@ h3 {
 }
 #jobqueue {
   margin-right: 200px;
-  padding: 1em;
+  padding: 1em 1em 1em 0;
 }
 #spawninstances {
   margin-right: 200px;
-  padding: 1em;
+  padding: 1em 1em 1em 0;
 }
 .renderopts>h3 {
   margin-top: 0;
@@ -174,6 +174,9 @@ select.instance_type {
 .topmenu {
   display: block;
 }
+#render-panel {
+  padding-left: 1em;
+}
 #render-panel::after {
   display: block;
   height: 0;
@@ -185,6 +188,9 @@ select.instance_type {
   clear: both;
 }
 @media screen and (max-width: 800px) {
+  html {
+    overflow-x: hidden;
+  }
   #debug {
     display: none;
   }
@@ -196,10 +202,23 @@ select.instance_type {
     margin-right: 0;
   }
   .main-view-container {
-    padding-right: 0;
+    padding: 5px 0;
+  }
+  .panel-container {
+    margin: 5px 0;
   }
   .panel-content {
     padding-right: 0;
+  }
+  .navbar {
+    font-size: .8em;
+  }
+  .navbar-static-top {
+    margin: 0;
+  }
+  .navbar-inner {
+    min-height: 0;
+    padding: 0;
   }
   .navbar .nav>li>a {
     padding: .2em;
@@ -207,12 +226,16 @@ select.instance_type {
   .navbar .brand {
     font-size: 1em;
     padding: 0;
+    display: none;
   }
   .logo-icon {
     padding: .2em;
   }
   .page-title {
     padding: .2em;
+  }
+  .grafana-menu-zoom-out {
+    display: none;
   }
 }
 
