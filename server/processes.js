@@ -171,7 +171,8 @@ Processes.prototype.checkInstanceCountForRegion = function(region) {
   }.bind(this));
   child.on('exit', function(code) {
     this.instances[region] = instancecount;
-    var refreshtime = (global.config.refresh && global.config.refresh.instances ? global.config.refresh.instances : 30000);
+    var influxcfg = global.config.influxdb;
+    var refreshtime = (influxcfg && influxcfg.refresh && influxcfg.refresh.instances ? influxcfg.refresh.instances : 30000);
     setTimeout(this.checkInstanceCountForRegion.bind(this, region), refreshtime);
   }.bind(this));
 };
@@ -190,7 +191,8 @@ Processes.prototype.checkJobCount = function() {
   }.bind(this));
   child.on('exit', function(code) {
     this.db.writePoint('jobs', {'jobs': jobcount});
-    var refreshtime = (global.config.refresh && global.config.refresh.jobs ? global.config.refresh.jobs : 30000);
+    var influxcfg = global.config.influxdb;
+    var refreshtime = (influxcfg && influxcfg.refresh && influxcfg.refresh.jobs ? influxcfg.refresh.jobs : 30000);
     setTimeout(this.checkJobCount.bind(this), refreshtime);
   }.bind(this));
 };

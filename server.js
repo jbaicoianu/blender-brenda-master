@@ -41,20 +41,23 @@ app.use(express.static(__dirname + '/grafana/dist'));
 app.use('/projects', serveIndex(global.config.projects_dir, {'icons': true}));
 app.use('/projects', serveStatic(global.config.projects_dir));
 
-// InfluxDB connection
-var influxclient = influx({
-  host : 'localhost',
-  port : 8086, // optional, default 8086
-  username : 'root',
-  password : 'root',
-  database : 'brenda'
-});
-procs.setDatabase(influxclient);
-influxclient.getDatabaseNames(function(err, dbnames) {
-  // Create databases if they don't exist
-  if (dbnames.indexOf('grafana') == -1) influxclient.createDatabase('grafana');
-  if (dbnames.indexOf('brenda') == -1) influxclient.createDatabase('brenda');
-});
+if (global.config.influxdb && !global.config.influxdb.readonly) {
+  // InfluxDB connection
+  var dbname = global.config.influxdb.database || 'brenda';
+  var influxclient = influx({
+    host : global.config.influxdb.host || 'localhost',
+    port : global.config.influxdb.port || 8086, // optional, default 8086
+    username : global.config.influxdb.user || 'root',
+    password : global.config.influxdb.password || 'root',
+    database : dbname
+  });
+  procs.setDatabase(influxclient);
+  influxclient.getDatabaseNames(function(err, dbnames) {
+    // Create databases if they don't exist
+    if (dbnames.indexOf('grafana') == -1) influxclient.createDatabase('grafana');
+    if (dbnames.indexOf(dbname) == -1) influxclient.createDatabase(dbname);
+  });
+}
 
 // make sure children die
 process.on('exit', function() {
