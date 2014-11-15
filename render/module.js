@@ -350,9 +350,9 @@ define([
     }
     $scope.scrollDebugToBottom = function() {
       setTimeout(function() {
-        var debug = document.getElementById('debug');
-        if (debug) {
-          debug.scrollTop = debug.scrollHeight;
+        var stdout = document.getElementById('stdout');
+        if (stdout) {
+          stdout.scrollTop = stdout.scrollHeight;
         }
       }, 0);
     }

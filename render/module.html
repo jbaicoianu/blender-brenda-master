@@ -32,12 +32,29 @@
           width: 100%;
           font-size: .9em;
           border: 1px solid #333;
-          overflow: scroll;
+        }
+        #debug h3 {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          background: rgba(0,0,0,.2);
+          border-bottom: 1px solid #333;
+          margin: 0;
+          font-size: 1em;
+          padding: .5em;
+          line-height: 1.2em;
         }
         #stdout {
           list-style: none;
           padding: 0;
           margin: 0;
+          overflow: scroll;
+          position: absolute;
+          top: 2.4em;
+          bottom: 0;
+          left: 0;
+          right: 0;
         }
         #stdout li {
           border-bottom: 1px solid #333;
@@ -329,7 +346,7 @@
     </div>
 
     <div id="debug">
-        stdout:
+        <h3>Console</h3>
         <ul id="stdout">
             <li ng-repeat="line in stdout track by $index">{{ line }}</li>
         </ul>
