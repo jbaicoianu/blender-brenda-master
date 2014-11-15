@@ -14,11 +14,13 @@ JOBARGS=${@:4}
 JOBDIR=$PROJECTROOT/$PROJECTNAME/jobs/$JOBNAME
 [ ! -d "$JOBDIR/scratch" ] && mkdir -p "$JOBDIR/scratch"
 
-# Create new job config file
+# Create new job config file if it doesn't exist yet
 JOBCONFIG=$JOBDIR/scratch/brenda-job.conf
-sed -e "s/\$PROJECTNAME/$PROJECTNAME/" \
-    -e "s/\$JOBNAME/$JOBNAME/" \
-    config/brenda-job.conf > "$JOBCONFIG"
+if [ ! -f $JOBCONFIG ]; then
+  sed -e "s/\$PROJECTNAME/$PROJECTNAME/" \
+      -e "s/\$JOBNAME/$JOBNAME/" \
+      config/brenda-job.conf > "$JOBCONFIG"
+fi
 
 
 # Add new job tasks to the queue
