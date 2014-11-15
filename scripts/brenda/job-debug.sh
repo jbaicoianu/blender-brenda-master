@@ -1,8 +1,9 @@
 debug_log() {
-  DEBUGDATE=$(date --rfc-3339=ns)
+  DEBUGDATE=$(date --rfc-3339=seconds)
   DEBUGDIR=$(dirname $DEBUGFILE)
   [ ! -d "$DEBUGDIR" ] && mkdir -p "$DEBUGDIR"
-  echo "$DEBUGDATE\t$DEBUGNAME\t$@" >>$DEBUGFILE
-  echo "$DEBUGDATE\t$DEBUGNAME\t$@"
+  DEBUGSTR="$DEBUGDATE\t$PROJECTNAME\t$JOBNAME\t$DEBUGNAME\t$@"
+  echo "$DEBUGSTR" >>$DEBUGFILE
+  echo "$DEBUGSTR"
 }
 
