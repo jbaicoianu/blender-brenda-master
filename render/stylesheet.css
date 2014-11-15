@@ -1,0 +1,200 @@
+.renderopts {
+    float: left;
+    margin-right: 5px;
+}
+.rangeinput {
+    width: 65px;
+}
+h3 {
+    size: 1.5rem;
+}
+.cb {
+    list-style: none;
+    padding: 10px;
+    display: block;
+    background-color: #000;
+    color: #FFF;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.cb:hover {
+    background-color: #4a4a4a;
+    color: #FFF;
+}
+#debug {
+  position: absolute;
+  top: 3em;
+  right: 1em;
+  bottom: 1em;
+  max-width: 400px;
+  width: 100%;
+  font-size: .9em;
+  border: 1px solid #333;
+}
+#debug h3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,.2);
+  border-bottom: 1px solid #333;
+  margin: 0;
+  font-size: 1em;
+  padding: .5em;
+  line-height: 1.2em;
+}
+#stdout {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: scroll;
+  position: absolute;
+  top: 2.4em;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+#stdout li {
+  border-bottom: 1px solid #333;
+  font-family: monospace;
+  white-space: pre;
+  font-size: .8em;
+  line-height: 1.2em;
+}
+#jobqueue {
+  margin-right: 200px;
+  padding: 0 1em;
+}
+#spawninstances {
+  margin-right: 200px;
+  padding: 0 1em;
+}
+.renderopts>h3 {
+  margin-top: 0;
+}
+#spawninstances ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#spawninstances .instance_type {
+  vertical-align: middle;
+  margin-bottom: 0;
+}
+#spawninstances .instance_price_refresh,
+#brendaOptions .blender_files_refresh {
+  vertical-align: middle;
+  margin-left: .5em;
+}
+#spawninstances .instance_prices {
+}
+#spawninstances .instance_prices>li {
+  display: inline-block;
+  padding: .5em .2em;
+  margin: .5em .2em;
+  border-radius: .5em;
+}
+#spawninstances .instance_prices>li.state_selected {
+}
+#spawninstances .instance_prices>li label {
+  color: black;
+  margin-bottom: 0;
+}
+#spawninstances .instance_prices>li h4 {
+  display: inline-block;
+  margin: 0 .2em;
+  vertical-align: middle;
+}
+#spawninstances .instance_prices>li em {
+  display: block;
+  margin-top: .2em;
+  font-size: 1.3em;
+  font-style: normal;
+}
+#spawninstances .instance_prices>li em:after {
+  content: '/hr';
+  font-size: .8em;
+}
+.jobform {
+    display: inline-block !important;
+    float: none !important;
+}
+.job_args {
+  list-style: none;
+}
+.job_args label {
+  display: inline-block;
+  width: 6em;
+}
+.job_args label:after {
+  content: ':';
+  margin-right: .2em;
+}
+.job_args .simple-form label {
+  width: auto;
+}
+.job_args .simple-form select {
+  width: auto;
+}
+.job_args .simple-form input {
+  width: 5em;
+}
+#job_renderargs_resx,
+#job_renderargs_resy {
+  width: 6em;
+}
+.socket_connection {
+  position: absolute;
+  right: 1em;
+  top: 1em;
+  width: 1em;
+  height: 1em;
+  border-radius: .5em;
+  background: red;
+  border: 1px solid black;
+}
+.socket_connection.socket_connected {
+  background: green;
+}
+select.instance_type {
+  width: auto;
+}
+.price_toolow {
+  color: yellow;
+}
+.price_ok {
+  color: green;
+}
+.topmenu {
+  display: block;
+}
+
+@media screen and (max-width: 800px) {
+  #debug {
+    display: none;
+  }
+  #spawninstances {
+    margin: 0;
+    padding: 0;
+  }
+  .main-view-container {
+    padding-right: 0;
+  }
+  .panel-content {
+    padding-right: 0;
+  }
+  .navbar .nav>li>a {
+    padding: .2em;
+  }
+  .navbar .brand {
+    font-size: 1em;
+    padding: 0;
+  }
+  .logo-icon {
+    padding: .2em;
+  }
+  .page-title {
+    padding: .2em;
+  }
+}
+

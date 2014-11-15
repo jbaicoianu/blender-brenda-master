@@ -1,215 +1,5 @@
 <div id="render-panel" ng-controller='render' ng-init="tab = 'jobqueue'">
-    <style>
-        .renderopts {
-            float: left;
-            margin-right: 5px;
-        }
-        .rangeinput {
-            width: 65px;
-        }
-        h3 {
-            size: 1.5rem;
-        }
-        .cb {
-            list-style: none;
-            padding: 10px;
-            display: block;
-            background-color: #000;
-            color: #FFF;
-            border: 1px solid black;
-            border-radius: 5px;
-        }
-        .cb:hover {
-            background-color: #4a4a4a;
-            color: #FFF;
-        }
-        #debug {
-          position: absolute;
-          top: 3em;
-          right: 1em;
-          bottom: 1em;
-          max-width: 400px;
-          width: 100%;
-          font-size: .9em;
-          border: 1px solid #333;
-        }
-        #debug h3 {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          background: rgba(0,0,0,.2);
-          border-bottom: 1px solid #333;
-          margin: 0;
-          font-size: 1em;
-          padding: .5em;
-          line-height: 1.2em;
-        }
-        #stdout {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-          overflow: scroll;
-          position: absolute;
-          top: 2.4em;
-          bottom: 0;
-          left: 0;
-          right: 0;
-        }
-        #stdout li {
-          border-bottom: 1px solid #333;
-          font-family: monospace;
-          white-space: pre;
-          font-size: .8em;
-          line-height: 1.2em;
-        }
-        #jobqueue {
-          margin-right: 200px;
-          padding: 1em;
-        }
-        #spawninstances {
-          margin-right: 200px;
-          padding: 0 1em;
-        }
-        .renderopts>h3 {
-          margin-top: 0;
-        }
-        #spawninstances ul {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-        #spawninstances .instance_type {
-          vertical-align: middle;
-          margin-bottom: 0;
-        }
-        #spawninstances .instance_price_refresh,
-        #brendaOptions .blender_files_refresh {
-          vertical-align: middle;
-          margin-left: .5em;
-        }
-        #spawninstances .instance_prices {
-        }
-        #spawninstances .instance_prices>li {
-          display: inline-block;
-          padding: .5em .2em;
-          margin: .5em .2em;
-          border-radius: .5em;
-        }
-        #spawninstances .instance_prices>li.state_selected {
-        }
-        #spawninstances .instance_prices>li label {
-          color: black;
-          margin-bottom: 0;
-        }
-        #spawninstances .instance_prices>li h4 {
-          display: inline-block;
-          margin: 0 .2em;
-          vertical-align: middle;
-        }
-        #spawninstances .instance_prices>li em {
-          display: block;
-          margin-top: .2em;
-          font-size: 1.3em;
-          font-style: normal;
-        }
-        #spawninstances .instance_prices>li em:after {
-          content: '/hr';
-          font-size: .8em;
-        }
-        .jobform {
-            display: inline-block !important;
-            float: none !important;
-        }
-        .job_args {
-          list-style: none;
-          margin: 0;
-        }
-        .job_args label {
-          display: inline-block;
-          width: 6em;
-        }
-        .job_args label:after {
-          content: ':';
-          margin-right: .2em;
-        }
-        .job_args .simple-form label {
-          width: auto;
-        }
-        .job_args .simple-form select {
-          width: auto;
-        }
-        .job_args .simple-form input {
-          width: 5em;
-        }
-        #job_renderargs_resx,
-        #job_renderargs_resy {
-          width: 6em;
-        }
-        .socket_connection {
-          position: absolute;
-          right: 1em;
-          top: 1em;
-          width: 1em;
-          height: 1em;
-          border-radius: .5em;
-          background: red;
-          border: 1px solid black;
-        }
-        .socket_connection.socket_connected {
-          background: green;
-        }
-        select.instance_type {
-          width: auto;
-        }
-        .price_toolow {
-          color: yellow;
-        }
-        .price_ok {
-          color: green;
-        }
-        .topmenu {
-          display: block;
-          margin-bottom: .5em;
-        }
-        #render-panel::after {
-          display: block;
-          height: 0;
-          content: '.';
-          visibility: hidden;
-          clear: both;
-        }
-
-        @media screen and (max-width: 800px) {
-          #debug {
-            display: none;
-          }
-          #spawninstances {
-            margin: 0;
-            padding: 0;
-          }
-          .main-view-container {
-            padding-right: 0;
-          }
-          .panel-content {
-            padding-right: 0;
-          }
-          .navbar .nav>li>a {
-            padding: .2em;
-          }
-          .navbar .brand {
-            font-size: 1em;
-            padding: 0;
-          }
-          .logo-icon {
-            padding: .2em;
-          }
-          .page-title {
-            padding: .2em;
-          }
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="/app/panels/render/stylesheet.css" />
     <!-- Add project modal -->
     <script type="text/ng-template" id="AddProjectModal.html">
         <div class="modal-header">
@@ -261,14 +51,14 @@
         <div class="btn" ng-click="tab = 'instances'" ng-class="{'btn-primary': tab == 'instances'}">Instances</div>
     </div>
     <!-- Upload Form -->
-    <div class="renderopts" id="uploadform" ng-show="tab == 'jobfile'">
+    <div id="uploadform" ng-show="tab == 'jobfile'">
         <div class="renderopts" id="upload">
             <input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this.files)" />
             <pre> {{ percent }} </pre>
         </div>
     </div>
     <!-- Submit Job -->
-    <div class="renderopts" id="jobqueue" ng-show="tab == 'jobqueue'">
+    <div id="jobqueue" ng-show="tab == 'jobqueue'">
         <div class="renderopts">
             <ul class="job_args">
                 <li>
@@ -340,13 +130,13 @@
                 </li>
             </ul> 
         </div>
-        <div class="renderfooter">
+        <div class="render-footer">
             <button ng-disabled="disableJobSubmit()" type="submit" class="btn btn-primary btn-lg" ng-click="submitJob()">Populate Jobs</button>
             <!--<pre>{{ animationArgs }}</pre>-->
         </div>
     </div>
     <!-- Spawn Instances -->
-    <div class="renderopts" id="spawninstances" ng-show="tab == 'instances'">
+    <div id="spawninstances" ng-show="tab == 'instances'">
         <div class="renderopts">
             Region: <select class="input-sm region" ng-change="getInstancePrice(instanceArgs.instancetype, true)" ng-model="instanceArgs.region" ng-options="r for r in regions" />
             <form class="simple-form">
@@ -365,7 +155,7 @@
                     <br>Spawn <input type="number" min="1" ng-model="instanceArgs.instancecount.num" size="3" id="instancecount" class='rangeinput' /> instances at $<input type="number" min="0.0001" step="0.0001" ng-model="instanceArgs.instanceprice" size="3" id="instanceprice" class='rangeinput' /> per hour
                 </li>
                 <li>Current Price: <strong class="estimated_price">${{ getEstimatedCurrentPrice() }}/hr</strong></li>
-                <li>Max Price: <strong class="estimated_price" ng-class="{price_toolow: !isMaxPriceHighEnough(), price_ok: isMaxPriceHighEnough()}">${{ getEstimatedMaxPrice() }}/hr</strong></li>
+                <li>Max Price: <strong class="estimated_price" ng-class="{price_toolow: !isMaxPriceHighEnough(), price_ok: isMaxPriceHighEnough()}">${{ getEstimatedMaxPrice() }}/hr</strong><input type="checkbox" class="cr1" ng-model="instanceArgs.dryrun" id="instance_args_dryrun"> <label class="cr1" for="instance_args_dryrun">Dry Run</label></li>
                 <li> <button type="submit" class="btn btn-primary btn-lg" bs-modal="'SpawnInstancesModal.html'"> Spawn Instances </button></li>
               </ul>
             </form>

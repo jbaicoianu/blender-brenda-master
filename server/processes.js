@@ -95,6 +95,9 @@ Processes.prototype.spawnInstance = function(client, instargs) {
     var regionConf = global.dirname + '/config/regions/' + instargs.region;
     args = args.concat(['-c', regionConf]);
   }
+  if (instargs.dryrun) {
+    args = args.concat(['-d']);
+  }
   args.push('spot');
 
   var child = spawn(global.config.brenda_run, args);
