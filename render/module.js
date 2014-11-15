@@ -349,7 +349,6 @@ define([
       return false;
     }
     $scope.scrollDebugToBottom = function() {
-      console.log('scroll the debug window');
       setTimeout(function() {
         var debug = document.getElementById('debug');
         if (debug) {
