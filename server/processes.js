@@ -49,7 +49,6 @@ Processes.prototype.buildConfig = function(opts, callback) {
     configLines.push('BLENDER_BAKE_MARGIN=' + bakemargin);
     configLines.push('BLENDER_BAKE_UVLAYER=' + bakeuvlayer);
   }
-console.log('do it!', opts, configLines);
 
   var configText = configLines.join('\n') + '\n';
   var path = global.config.projects_dir + '/' + opts.project.dir + '/jobs/' + opts.jobname + '/scratch/brenda-job.conf';
@@ -70,7 +69,7 @@ Processes.prototype.submitJob = function(client, jobargs) {
           args = [jobargs.project.dir, jobargs.jobname, 'animation', '-s', jobargs.start, '-e', jobargs.end];
         }
       } else if (jobargs.jobtype == 'bake') {
-        args = [jobargs.project.dir, jobargs.jobname, 'bake', '-e', jobargs.numobjects];
+        args = [jobargs.project.dir, jobargs.jobname, 'bake', '-s', 0, '-e', jobargs.numobjects];
       }
       var child = spawn(global.config.spawn_jobs, args); // change to brenda-work
       this.children.push(child);
