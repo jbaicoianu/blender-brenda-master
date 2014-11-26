@@ -49,7 +49,7 @@
         <!--<div class="btn" ng-click="tab = 'projectselect'" ng-class="{'btn-primary': tab == 'projectselect'}">Projects</div>-->
         <!--<div class="cb" ng-click="tab = 'jobfile'">Jobfile</div>-->
         <div class="btn" ng-click="tab = 'jobqueue'" ng-class="{'btn-primary': tab == 'jobqueue'}">Jobs</div>
-        <div class="btn" ng-click="tab = 'instances'" ng-class="{'btn-primary': tab == 'instances'}">Instances</div>
+        <div class="btn" ng-click="tab = 'instances'; getInstancePrice(instanceArgs.instancetype)" ng-class="{'btn-primary': tab == 'instances'}">Instances</div>
     </div>
     <!-- Upload Form -->
     <div id="uploadform" ng-show="tab == 'jobfile'">
@@ -89,17 +89,20 @@
                     </div>
                 </li>
                 <li class="simple-form jobform" ng-hide="jobtype.value!='bake'">
-                    <label for="job_args_baketype">Bake Type</label>
-                    <select ng-model="bakeArgs.baketype" ng-options="k as v for (k,v) in baketypes" />
+                    <div>
+                        <label for="job_args_baketype">Bake Type</label>
+                        <select ng-model="bakeArgs.baketype" ng-options="k as v for (k,v) in baketypes" />
 
-                    <label for="job_args_uvlayer">UV Layer</label>
-                    <input type="text" ng-model="bakeArgs.bakeuvlayer" id="job_args_uvlayer" />
+                        <label for="job_args_uvlayer">UV Layer</label>
+                        <input type="text" ng-model="bakeArgs.bakeuvlayer" id="job_args_uvlayer" />
+                    </div>
+                    <div>
+                        <label for="job_args_numobjects">Objects</label>
+                        <input type="number" min="1" ng-model="bakeArgs.numobjects" id="job_args_numobjects" class='rangeinput' />
 
-                    <label for="job_args_numobjects">Objects</label>
-                    <input type="number" min="1" ng-model="bakeArgs.numobjects" id="job_args_numobjects" class='rangeinput' />
-
-                    <label for="job_args_bakemargin">Margin</label>
-                    <input type="number" min="0" ng-model="bakeArgs.bakemargin" id="job_args_bakemargin" class='rangeinput' />
+                        <label for="job_args_bakemargin">Margin</label>
+                        <input type="number" min="0" ng-model="bakeArgs.bakemargin" id="job_args_bakemargin" class='rangeinput' />
+                    </div>
                 </li>
             </ul>
         </div>
