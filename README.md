@@ -7,3 +7,5 @@ A node.js backend and a front-end for managing a cluster of Blender render syste
  * Auto-merge frames as they finish
  * Handle single-frame, animation, baking, etc
  * Keep project data updated automatically with btsync
+
+![screenshot](http://baicoianu.com/~bai/brenda-render-manager.png)
